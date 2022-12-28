@@ -11,12 +11,13 @@
     "test": "peeky run"
   },
   "devDependencies": {
+    "@peeky/server": "^0.14.0",
     "@peeky/test": "^0.14.1",
     "nuxt": "3.0.0",
     "vitest": "^0.26.2"
   },
   "dependencies": {
-    "ant-design-vue": "^3.2.15",
-    "@ant-design/icons-vue": "^6.1.0"
+    "@ant-design/icons-vue": "^6.1.0",
+    "ant-design-vue": "^3.2.15"
   }
 }
