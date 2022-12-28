@@ -1,0 +1,22 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "start": "nuxt start",
+    "test:open": "peeky open",
+    "test": "peeky run"
+  },
+  "devDependencies": {
+    "@peeky/test": "^0.14.1",
+    "nuxt": "3.0.0",
+    "vitest": "^0.26.2"
+  },
+  "dependencies": {
+    "ant-design-vue": "^3.2.15",
+    "@ant-design/icons-vue": "^6.1.0"
+  }
+}
