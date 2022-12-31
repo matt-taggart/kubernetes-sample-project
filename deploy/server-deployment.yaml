@@ -14,20 +14,20 @@ spec:
     spec:
       containers:
         - name: server
-          image: mtaggart89/k8s-sample-server
+          image: localhost:5001/server
           ports:
             - containerPort: 8080
           env:
             - name: REDIS_HOST
               value: redis-cluster-ip-service
             - name: REDIS_PORT
-              value: '6379'
+              value: "6379"
             - name: PGUSER
               value: postgres
             - name: PGHOST
               value: postgres-cluster-ip-service
             - name: PGPORT
-              value: '5432'
+              value: "5432"
             - name: PGDATABASE
               value: postgres
             - name: PGPASSWORD
@@ -35,4 +35,3 @@ spec:
                 secretKeyRef:
                   name: pgpassword
                   key: PGPASSWORD
-

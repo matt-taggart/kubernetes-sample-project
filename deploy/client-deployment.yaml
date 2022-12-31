@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: client
-          image: mtaggart89/k8s-sample-client
+          image: localhost:5001/client
           ports:
             - containerPort: 3000

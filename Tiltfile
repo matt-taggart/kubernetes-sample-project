@@ -1,5 +1,5 @@
 docker_build(
-    'client',
+    'localhost:5001/client',
     context='.',
     dockerfile='./client/Dockerfile.dev',
     only=['./client/'],
@@ -12,10 +12,8 @@ docker_build(
     ]
 )
 
-k8s_yaml('./deploy/client-deployment.yaml')
-
 docker_build(
-    'server',
+    'localhost:5001/server',
     context='.',
     dockerfile='./server/Dockerfile.dev',
     only=['./server/'],
@@ -28,10 +26,8 @@ docker_build(
     ]
 )
 
-k8s_yaml('./deploy/server-deployment.yaml')
-
 docker_build(
-    'customers',
+    'localhost:5001/customers',
     context='.',
     dockerfile='./customers/Dockerfile.dev',
     only=['./customers/'],
@@ -44,4 +40,17 @@ docker_build(
     ]
 )
 
+k8s_yaml('./deploy/server-deployment.yaml')
+k8s_yaml('./deploy/client-deployment.yaml')
 k8s_yaml('./deploy/customers-deployment.yaml')
+
+k8s_yaml('./deploy/server-cluster-ip-service.yaml')
+k8s_yaml('./deploy/client-cluster-ip-service.yaml')
+k8s_yaml('./deploy/customers-cluster-ip-service.yaml')
+
+k8s_yaml('./deploy/database-persistent-volume-claim.yaml')
+k8s_yaml('./deploy/redis-deployment.yaml')
+k8s_yaml('./deploy/postgres-deployment.yaml')
+
+k8s_yaml('./deploy/ingress-service.yaml')
+
