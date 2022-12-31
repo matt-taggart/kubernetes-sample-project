@@ -4,11 +4,12 @@ WORKDIR /app
 
 RUN npm i -g pnpm
 
-COPY package.json ./
-COPY pnpm-lock.yaml ./
+COPY client/package.json ./
+COPY client/pnpm-lock.yaml ./
 
 RUN pnpm install
 
-COPY . .
+COPY client/ .
 
 CMD ["pnpm", "dev"] 
+

@@ -1,7 +1,7 @@
 docker_build(
     'localhost:5001/client',
     context='.',
-    dockerfile='./client/Dockerfile.dev',
+    dockerfile='./deploy/Dockerfile.client.dev',
     only=['./client/'],
     live_update=[
         sync('./client/', '/app/client/'),
@@ -15,7 +15,7 @@ docker_build(
 docker_build(
     'localhost:5001/server',
     context='.',
-    dockerfile='./server/Dockerfile.dev',
+    dockerfile='./deploy/Dockerfile.server.dev',
     only=['./server/'],
     live_update=[
         sync('./server/', '/app/server/'),
@@ -29,7 +29,7 @@ docker_build(
 docker_build(
     'localhost:5001/customers',
     context='.',
-    dockerfile='./customers/Dockerfile.dev',
+    dockerfile='./deploy/Dockerfile.customers.dev',
     only=['./customers/'],
     live_update=[
         sync('./customers/', '/app/customers/'),
