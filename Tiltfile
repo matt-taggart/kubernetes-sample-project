@@ -5,12 +5,13 @@ args = cfg.get('args', [])
 isDev = 'dev' in args
 baseUrl = 'localhost:5001/' if isDev else 'mtaggart89/k8s-sample-project-' 
 env = 'dev' if isDev else 'prod'
+print(env)
 ingressEnabled = 'false' if isDev else 'true'
 
 docker_build(
     baseUrl + 'client',
-    context='.',
-    dockerfile='./docker/Dockerfile.client.' + env,
+    context='./client',
+    dockerfile='./client/Dockerfile.client.' + env,
     live_update=[
         sync('./client', '/app/client'),
         run(
@@ -22,9 +23,8 @@ docker_build(
 
 docker_build(
     baseUrl + 'server',
-    context='.',
-    dockerfile='./docker/Dockerfile.server.' + env,
-    only=['./server/'],
+    context='./server',
+    dockerfile='./server/Dockerfile.server.' + env,
     live_update=[
         sync('./server', '/app/server'),
         run(
@@ -36,8 +36,8 @@ docker_build(
 
 docker_build(
     baseUrl + 'customers',
-    context='.',
-    dockerfile='./docker/Dockerfile.customers.' + env,
+    context='./customers',
+    dockerfile='./customers/Dockerfile.customers.' + env,
     live_update=[
         sync('./customers', '/app/customers'),
         run(
