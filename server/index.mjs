@@ -18,7 +18,6 @@ const myQueue = new Queue("foo", {
     port: 6379,
   },
 });
-console.log('yuppp')
 
 app.use(bodyParser());
 app.use(cors());

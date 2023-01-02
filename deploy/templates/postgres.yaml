@@ -31,3 +31,15 @@ spec:
                 secretKeyRef:
                   name: pgpassword
                   key: PGPASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-cluster-ip-service
+spec:
+  selector:
+    component: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+

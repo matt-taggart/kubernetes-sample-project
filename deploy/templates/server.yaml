@@ -1,20 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: customers-deployment
+  name: server-deployment
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      component: customers
+      component: server
   template:
     metadata:
       labels:
-        component: customers
+        component: server
     spec:
       containers:
-        - name: customers
-          image: {{ .Values.image.customers }}
+        - name: server
+          image: {{ .Values.image.server }}
+          ports:
+            - containerPort: 8080
           env:
             - name: REDIS_HOST
               value: redis-cluster-ip-service
@@ -33,3 +35,15 @@ spec:
                 secretKeyRef:
                   name: pgpassword
                   key: PGPASSWORD
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: server-cluster-ip-service
+spec:
+  type: ClusterIP
+  selector:
+    component: server
+  ports:
+    - port: 8080
+      targetPort: 8080
