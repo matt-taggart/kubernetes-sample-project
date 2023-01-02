@@ -1,0 +1,5 @@
+replicaCount: 1
+image:
+  client: localhost:5001/client
+  server: localhost:5001/server
+  customers: localhost:5001/customers

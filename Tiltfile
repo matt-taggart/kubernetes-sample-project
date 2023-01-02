@@ -1,10 +1,18 @@
+config.define_string_list("args", args=True)
+cfg = config.parse()
+args = cfg.get('args', [])
+
+isDev = 'dev' in args
+baseUrl = 'localhost:5001/' if isDev else 'mtaggart89/k8s-sample-project-' 
+env = 'dev' if isDev else 'prod'
+ingressEnabled = 'false' if isDev else 'true'
+
 docker_build(
-    'localhost:5001/client',
+    baseUrl + 'client',
     context='.',
-    dockerfile='./deploy/Dockerfile.client.dev',
-    only=['./client/'],
+    dockerfile='./docker/Dockerfile.client.' + env,
     live_update=[
-        sync('./client/', '/app/client/'),
+        sync('./client', '/app/client'),
         run(
             'pnpm install',
             trigger=['./client/package.json']
@@ -13,12 +21,12 @@ docker_build(
 )
 
 docker_build(
-    'localhost:5001/server',
+    baseUrl + 'server',
     context='.',
-    dockerfile='./deploy/Dockerfile.server.dev',
+    dockerfile='./docker/Dockerfile.server.' + env,
     only=['./server/'],
     live_update=[
-        sync('./server/', '/app/server/'),
+        sync('./server', '/app/server'),
         run(
             'pnpm install',
             trigger=['./server/package.json']
@@ -27,12 +35,11 @@ docker_build(
 )
 
 docker_build(
-    'localhost:5001/customers',
+    baseUrl + 'customers',
     context='.',
-    dockerfile='./deploy/Dockerfile.customers.dev',
-    only=['./customers/'],
+    dockerfile='./docker/Dockerfile.customers.' + env,
     live_update=[
-        sync('./customers/', '/app/customers/'),
+        sync('./customers', '/app/customers'),
         run(
             'pnpm install',
             trigger=['./customers/package.json']
@@ -40,22 +47,12 @@ docker_build(
     ]
 )
 
-
-k8s_yaml('./deploy/server-deployment.yaml')
-k8s_yaml('./deploy/client-deployment.yaml')
-k8s_yaml('./deploy/customers-deployment.yaml')
-
-k8s_yaml('./deploy/server-cluster-ip-service.yaml')
-k8s_yaml('./deploy/client-cluster-ip-service.yaml')
-k8s_yaml('./deploy/customers-cluster-ip-service.yaml')
-
-k8s_yaml('./deploy/database-persistent-volume-claim.yaml')
-k8s_yaml('./deploy/redis-deployment.yaml')
-k8s_yaml('./deploy/postgres-deployment.yaml')
-
-k8s_yaml('./deploy/redis-cluster-ip-service.yaml')
-k8s_yaml('./deploy/postgres-cluster-ip-service.yaml')
-
-k8s_yaml('./deploy/ingress-service.yaml')
+yaml = helm(
+  './deploy',
+  name='deploy',
+  values=['./deploy/values.' + env + '.yaml'],
+  set=['ingress.enabled=true']
+  )
+k8s_yaml(yaml)
 
 k8s_resource('client-deployment', port_forwards=3000)

@@ -1,20 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: customers-deployment
+  name: server-deployment
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      component: customers
+      component: server
   template:
     metadata:
       labels:
-        component: customers
+        component: server
     spec:
       containers:
-        - name: customers
-          image: localhost:5001/customers
+        - name: server
+          image: {{ .Values.image.server }}
+          ports:
+            - containerPort: 8080
           env:
             - name: REDIS_HOST
               value: redis-cluster-ip-service
