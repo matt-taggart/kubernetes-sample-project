@@ -12,7 +12,12 @@ const app = new Koa();
 const router = new Router();
 
 const { PORT = 8080 } = process.env;
-const myQueue = new Queue("foo");
+const myQueue = new Queue("foo", {
+  connection: {
+    host: "redis-cluster-ip-service",
+    port: 6379,
+  },
+});
 
 app.use(bodyParser());
 app.use(cors());

@@ -40,6 +40,7 @@ docker_build(
     ]
 )
 
+
 k8s_yaml('./deploy/server-deployment.yaml')
 k8s_yaml('./deploy/client-deployment.yaml')
 k8s_yaml('./deploy/customers-deployment.yaml')
@@ -52,5 +53,9 @@ k8s_yaml('./deploy/database-persistent-volume-claim.yaml')
 k8s_yaml('./deploy/redis-deployment.yaml')
 k8s_yaml('./deploy/postgres-deployment.yaml')
 
+k8s_yaml('./deploy/redis-cluster-ip-service.yaml')
+k8s_yaml('./deploy/postgres-cluster-ip-service.yaml')
+
 k8s_yaml('./deploy/ingress-service.yaml')
 
+k8s_resource('client-deployment', port_forwards=3000)
