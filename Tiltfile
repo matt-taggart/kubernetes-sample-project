@@ -48,7 +48,7 @@ docker_build(
 yaml = helm(
   './deploy',
   name='deploy',
-  values=['./deploy/values.' + env + '.yaml'],
+  values=['./deploy/values.' + env + '.yaml', './deploy/values.secrets.yaml'],
   set=['ingress.enabled=true']
   )
 k8s_yaml(yaml)
