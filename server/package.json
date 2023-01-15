@@ -4,13 +4,15 @@
     "dev": "nodemon index.mjs"
   },
   "imports": {
-    "#middleware/*": "./middleware/*"
+    "#middleware/*": "./middleware/*",
+    "#constants/*": "./constants/*"
   },
   "dependencies": {
     "@hapi/boom": "^10.0.0",
     "@koa/router": "^12.0.0",
     "bullmq": "^3.5.1",
     "death": "^1.1.0",
+    "jsonwebtoken": "^9.0.0",
     "kcors": "^2.2.2",
     "koa": "^2.14.1",
     "koa-bodyparser": "^4.3.0",

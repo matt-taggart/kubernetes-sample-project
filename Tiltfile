@@ -1,15 +1,7 @@
-config.define_string_list("args", args=True)
-cfg = config.parse()
-args = cfg.get('args', [])
-
-isDev = 'dev' in args
-baseUrl = 'localhost:5001/' if isDev else 'mtaggart89/k8s-sample-project-' 
-env = 'dev' if isDev else 'prod'
-
 docker_build(
-    baseUrl + 'client',
+    'client',
     context='./client',
-    dockerfile='./client/Dockerfile.client.' + env,
+    dockerfile='./client/Dockerfile.client.dev',
     live_update=[
         sync('./client', '/app'),
         run(
@@ -20,9 +12,9 @@ docker_build(
 )
 
 docker_build(
-    baseUrl + 'server',
+    'server',
     context='./server',
-    dockerfile='./server/Dockerfile.server.' + env,
+    dockerfile='./server/Dockerfile.server.dev',
     live_update=[
         sync('./server', '/app'),
         run(
@@ -33,9 +25,9 @@ docker_build(
 )
 
 docker_build(
-    baseUrl + 'customers',
+    'customers',
     context='./customers',
-    dockerfile='./customers/Dockerfile.customers.' + env,
+    dockerfile='./customers/Dockerfile.customers.dev',
     live_update=[
         sync('./customers', '/app'),
         run(
@@ -45,10 +37,4 @@ docker_build(
     ]
 )
 
-yaml = helm(
-  './deploy',
-  name='deploy',
-  values=['./deploy/values.' + env + '.yaml', './deploy/values.secrets.yaml'],
-  set=['ingress.enabled=true']
-  )
-k8s_yaml(yaml)
+k8s_yaml(kustomize('./kustomize/environments/development', flags = ["--enable-alpha-plugins"]))

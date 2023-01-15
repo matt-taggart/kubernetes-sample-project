@@ -6,26 +6,14 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      component: redis
+      app: redis
   template:
     metadata:
       labels:
-        component: redis
+        app: redis
     spec:
       containers:
         - name: redis
           image: redis
           ports:
             - containerPort: 6379
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: redis-cluster-ip-service
-spec:
-  type: ClusterIP
-  selector:
-    component: redis
-  ports:
-    - port: 6379
-      targetPort: 6379

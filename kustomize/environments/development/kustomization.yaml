@@ -1,0 +1,10 @@
+bases:
+  - ../../application
+resources:
+  - ./mongodb-deployment.yaml
+  - ./mongodb-pvc.yaml
+  - ./mongodb-service.yaml
+  - ./redis-deployment.yaml
+  - ./redis-service.yaml
+generators:
+  - ./secret-generator.yaml

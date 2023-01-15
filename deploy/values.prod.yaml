@@ -1,5 +1,0 @@
-replicaCount: 3
-image:
-  client: mtaggart89/k8s-sample-project-client
-  server: mtaggart89/k8s-sample-project-server
-  customers: mtaggart89/k8s-sample-project-customers

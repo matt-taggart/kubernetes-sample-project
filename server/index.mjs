@@ -5,19 +5,18 @@ import cors from "kcors";
 import logger from "koa-pino-logger";
 import Boom from "@hapi/boom";
 import ON_DEATH from "death";
-import { Queue } from "bullmq";
+import { Queue, QueueEvents } from "bullmq";
 import { errorHandler } from "#middleware/errorHandler.mjs";
+import { REDIS_CONNECTION } from "#constants/redis.mjs";
 
 const app = new Koa();
 const router = new Router();
 
 const { PORT = 8080 } = process.env;
-const myQueue = new Queue("foo", {
-  connection: {
-    host: "redis-cluster-ip-service",
-    port: 6379,
-  },
-});
+
+const registrationQueue = new Queue("registration", REDIS_CONNECTION);
+
+const loginQueue = new Queue("login", REDIS_CONNECTION);
 
 app.use(bodyParser());
 app.use(cors());
@@ -36,14 +35,46 @@ router.get("/healthz", (ctx) => {
   ctx.body = "success";
 });
 
+router.post("/register", async (ctx) => {
+  try {
+    const job = await registrationQueue.add("register", ctx.request.body);
+    const { customer, accessToken, refreshToken } = await job.waitUntilFinished(
+      new QueueEvents("registration", REDIS_CONNECTION)
+    );
+    ctx.body = { customer, accessToken };
+
+    ctx.cookies.set("cc_auth", refreshToken, {
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+  } catch (error) {
+    if (error.message === "User already exists") {
+      ctx.throw(400, error.message);
+    }
+  }
+});
+
+router.post("/login", async (ctx) => {
+  try {
+    const job = await loginQueue.add("loginUser", ctx.request.body);
+    const result = await job.waitUntilFinished(
+      new QueueEvents("login", REDIS_CONNECTION)
+    );
+    ctx.body = result.customer;
+  } catch (error) {
+    ctx.throw(401, "Username or password is incorrect");
+  }
+});
+
+router.post("/refresh-token", async (ctx) => {
+  const authCookie = ctx.cookies.get("cc_auth");
+  if (!authCookie) {
+    ctx.throw(401);
+  }
+});
+
 const server = app.listen(PORT);
-
-async function addJobs() {
-  await myQueue.add("myJobName", { foo: "bar" });
-  await myQueue.add("myJobName", { qux: "baz" });
-}
-
-await addJobs();
 
 ON_DEATH(() => {
   server.close();

@@ -1,0 +1,14 @@
+.container {
+  display: flex;
+}
+
+.photo {
+  max-height: 100vh;
+  object-fit: cover;
+  max-width: 50vw;
+}
+
+.form {
+  padding: 1rem 2rem;
+  width: 100%;
+}
