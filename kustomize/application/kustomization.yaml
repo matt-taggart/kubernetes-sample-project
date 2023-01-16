@@ -3,6 +3,8 @@ resources:
   - client-service.yaml
   - server-deployment.yaml
   - server-service.yaml
+  - auth-deployment.yaml
+  - auth-service.yaml
   - customers-deployment.yaml
   - customers-service.yaml
   - ingress-service.yaml

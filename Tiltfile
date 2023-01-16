@@ -1,5 +1,5 @@
 docker_build(
-    'client',
+    'us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/client',
     context='./client',
     dockerfile='./client/Dockerfile.client.dev',
     live_update=[
@@ -12,7 +12,7 @@ docker_build(
 )
 
 docker_build(
-    'server',
+    'us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/server',
     context='./server',
     dockerfile='./server/Dockerfile.server.dev',
     live_update=[
@@ -25,7 +25,7 @@ docker_build(
 )
 
 docker_build(
-    'customers',
+    'us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/customers',
     context='./customers',
     dockerfile='./customers/Dockerfile.customers.dev',
     live_update=[
@@ -33,6 +33,19 @@ docker_build(
         run(
             'pnpm install',
             trigger=['./customers/package.json']
+        )
+    ]
+)
+
+docker_build(
+    'us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/auth',
+    context='./auth',
+    dockerfile='./auth/Dockerfile.auth.dev',
+    live_update=[
+        sync('./auth', '/app'),
+        run(
+            'pnpm install',
+            trigger=['./auth/package.json']
         )
     ]
 )

@@ -1,8 +1,11 @@
-import { Worker } from "bullmq";
+import { Queue, QueueEvents, Worker } from "bullmq";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import { REDIS_CONNECTION } from "#constants/redis.mjs";
 import { CustomerModel } from "#models/customer.mjs";
+
+const createCustomerQueue = new Queue("createCustomer", REDIS_CONNECTION);
+// const getCustomerQueue = new Queue("getCustomer", REDIS_CONNECTION);
 
 const init = async () => {
   await mongoose.connect(process.env.MONGODB_URL);
@@ -24,7 +27,13 @@ const registrationWorker = new Worker(
         throw new Error("User already exists");
       }
 
-      const customer = await CustomerModel.create(job.data);
+      const createCustomerJob = await createCustomerQueue.add(
+        "create",
+        job.data
+      );
+      const customer = await createCustomerJob.waitUntilFinished(
+        new QueueEvents("createCustomer", REDIS_CONNECTION)
+      );
 
       const accessToken = jwt.sign(
         {
@@ -73,19 +82,20 @@ const loginWorker = new Worker(
   "login",
   async (job) => {
     try {
-      const customer = await CustomerModel.findOne({ email: job.data.email });
+      const customer = await CustomerModel.findOne({
+        email: job.data.email,
+      }).exec();
 
       const isValidPassword = await customer.comparePasswords(
         job.data.password
       );
-
-      console.log("%cisValidPassword", "color:cyan; ", isValidPassword);
 
       if (!isValidPassword) {
         throw new Error("Invalid password");
       }
 
       return {
+        id: customer._id,
         firstName: customer.firstName,
         lastName: customer.lastName,
         email: customer.email,

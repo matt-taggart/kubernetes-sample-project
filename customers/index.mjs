@@ -1,6 +1,5 @@
 import { Worker } from "bullmq";
 import mongoose from "mongoose";
-import jwt from "jsonwebtoken";
 import { REDIS_CONNECTION } from "#constants/redis.mjs";
 import { CustomerModel } from "#models/customer.mjs";
 
@@ -12,46 +11,11 @@ init().catch((_) => {
   process.exit(0);
 });
 
-const registrationWorker = new Worker(
-  "registration",
+const createCustomerWorker = new Worker(
+  "createCustomer",
   async (job) => {
     try {
-      const numberOfUserEntries = await CustomerModel.count({
-        email: job.data.email,
-      });
-
-      if (numberOfUserEntries > 0) {
-        throw new Error("User already exists");
-      }
-
-      const customer = await CustomerModel.create(job.data);
-
-      const accessToken = jwt.sign(
-        {
-          id: customer._id,
-        },
-        process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "3m" }
-      );
-
-      const refreshToken = jwt.sign(
-        {
-          id: customer._id,
-        },
-        process.env.REFRESH_TOKEN_SECRET,
-        { expiresIn: "1d" }
-      );
-
-      await CustomerModel.findOneAndUpdate(
-        { id: customer._id },
-        { accessToken, refreshToken }
-      );
-
-      return {
-        customer,
-        accessToken,
-        refreshToken,
-      };
+      return await CustomerModel.create(job.data);
     } catch (error) {
       throw error;
     }
@@ -59,37 +23,21 @@ const registrationWorker = new Worker(
   REDIS_CONNECTION
 );
 
-registrationWorker.on("completed", (job, returnvalue) => {
+createCustomerWorker.on("completed", (job, returnvalue) => {
   console.log(`${job.id} has completed!`);
   return returnvalue;
 });
 
-registrationWorker.on("failed", (job, err) => {
+createCustomerWorker.on("failed", (job, err) => {
   console.log(`${job.id} has failed with ${err.message}`);
   return err;
 });
 
-const loginWorker = new Worker(
-  "login",
+const getCustomerWorker = new Worker(
+  "getCustomer",
   async (job) => {
     try {
-      const customer = await CustomerModel.findOne({ email: job.data.email });
-
-      const isValidPassword = await customer.comparePasswords(
-        job.data.password
-      );
-
-      console.log("%cisValidPassword", "color:cyan; ", isValidPassword);
-
-      if (!isValidPassword) {
-        throw new Error("Invalid password");
-      }
-
-      return {
-        firstName: customer.firstName,
-        lastName: customer.lastName,
-        email: customer.email,
-      };
+      return await CustomerModel.findOne({ id: job.data.id });
     } catch (error) {
       throw error;
     }
@@ -97,12 +45,12 @@ const loginWorker = new Worker(
   REDIS_CONNECTION
 );
 
-loginWorker.on("completed", (job, returnvalue) => {
+getCustomerWorker.on("completed", (job, returnvalue) => {
   console.log(`${job.id} has completed!`);
   return returnvalue;
 });
 
-loginWorker.on("failed", (job, err) => {
+getCustomerWorker.on("failed", (job, err) => {
   console.log(`${job.id} has failed with ${err.message}`);
   return err;
 });

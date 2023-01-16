@@ -15,8 +15,8 @@ const router = new Router();
 const { PORT = 8080 } = process.env;
 
 const registrationQueue = new Queue("registration", REDIS_CONNECTION);
-
 const loginQueue = new Queue("login", REDIS_CONNECTION);
+const refreshTokenQueue = new Queue("refreshToken", REDIS_CONNECTION);
 
 app.use(bodyParser());
 app.use(cors());
@@ -58,10 +58,11 @@ router.post("/register", async (ctx) => {
 router.post("/login", async (ctx) => {
   try {
     const job = await loginQueue.add("loginUser", ctx.request.body);
-    const result = await job.waitUntilFinished(
+    const customer = await job.waitUntilFinished(
       new QueueEvents("login", REDIS_CONNECTION)
     );
-    ctx.body = result.customer;
+    ctx.status = 201;
+    ctx.body = customer;
   } catch (error) {
     ctx.throw(401, "Username or password is incorrect");
   }
@@ -72,6 +73,19 @@ router.post("/refresh-token", async (ctx) => {
   if (!authCookie) {
     ctx.throw(401);
   }
+
+  const job = await refreshTokenQueue.add("refresh", ctx.request.body);
+  const { accessToken, refreshToken } = await job.waitUntilFinished(
+    new QueueEvents("refreshtoken", REDIS_CONNECTION)
+  );
+
+  ctx.body = { accessToken };
+
+  ctx.cookies.set("cc_auth", refreshToken, {
+    httpOnly: true,
+    sameSite: "strict",
+    maxAge: 24 * 60 * 60 * 1000,
+  });
 });
 
 const server = app.listen(PORT);

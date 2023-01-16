@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: customers-deployment
+  name: auth-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: customers
+      app: auth
   template:
     metadata:
       labels:
-        app: customers
+        app: auth
     spec:
       containers:
-        - name: customers
-          image: us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/customers
+        - name: auth
+          image: us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/auth
           env:
             - name: REDIS_HOST
               value: redis-cluster-ip-service
