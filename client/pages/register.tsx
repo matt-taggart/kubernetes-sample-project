@@ -11,7 +11,7 @@ export default function Register() {
   const router = useRouter();
   const onFinish = async (values: any) => {
     await axios({
-      url: "/api/register",
+      url: "/v1/register",
       method: "post",
       data: values,
       withCredentials: true,

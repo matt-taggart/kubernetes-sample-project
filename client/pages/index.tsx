@@ -18,10 +18,10 @@ Home.getLayout = function getLayout(page) {
 
 export async function getServerSideProps() {
   try {
-    const { data: tokenData } = await axios.post("/api/refresh-token", {
+    const { data: tokenData } = await axios.post("/v1/refresh-token", {
       withCredentials: true,
     });
-    const { data: customerData } = await axios.get("/api/customers", {
+    const { data: customerData } = await axios.get("/v1/customers", {
       headers: {
         Authorization: `Bearer ${tokenData.accessToken}`,
       },

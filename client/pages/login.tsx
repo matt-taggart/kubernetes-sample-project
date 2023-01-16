@@ -10,7 +10,7 @@ import styles from "../styles/login.module.css";
 export default function Login() {
   const router = useRouter();
   const onFinish = async (values: any) => {
-    await axios.post("/api/login", values);
+    await axios.post("/v1/login", values);
     router.push("/");
   };
   return (
