@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { Button, Form, Input, Typography } from "antd";
 import Image from "next/image";
 import NuxtLink from "next/link";
@@ -7,24 +8,15 @@ import CardImage from "../public/moody-card.jpg";
 import styles from "../styles/login.module.css";
 
 export default function Register() {
+  const router = useRouter();
   const onFinish = async (values: any) => {
-    const response = await axios({
+    await axios({
       url: "/api/register",
       method: "post",
       data: values,
       withCredentials: true,
     });
-
-    try {
-      const result = await axios.get("/api/protected", {
-        headers: {
-          Authorization: `Bearer ${response.data.accessToken}`,
-        },
-      });
-      console.log("%cresult", "color:cyan; ", result);
-    } catch (error) {
-      console.log("%cerror", "color:cyan; ", error);
-    }
+    router.push("/");
   };
   return (
     <div className={styles.container}>

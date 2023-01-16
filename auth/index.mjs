@@ -86,6 +86,10 @@ const loginWorker = new Worker(
         email: job.data.email,
       }).exec();
 
+      if (!customer) {
+        throw new Error("User does not exist");
+      }
+
       const isValidPassword = await customer.comparePasswords(
         job.data.password
       );
@@ -94,11 +98,25 @@ const loginWorker = new Worker(
         throw new Error("Invalid password");
       }
 
+      const id = customer._id;
+
+      const accessToken = jwt.sign({ id }, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: "3m",
+      });
+
+      const refreshToken = jwt.sign({ id }, process.env.REFRESH_TOKEN_SECRET, {
+        expiresIn: "1d",
+      });
+
+      await CustomerModel.findOneAndUpdate(
+        { id },
+        { accessToken, refreshToken }
+      );
+
       return {
-        id: customer._id,
-        firstName: customer.firstName,
-        lastName: customer.lastName,
-        email: customer.email,
+        customer,
+        accessToken,
+        refreshToken,
       };
     } catch (error) {
       throw error;
@@ -113,6 +131,45 @@ loginWorker.on("completed", (job, returnvalue) => {
 });
 
 loginWorker.on("failed", (job, err) => {
+  console.log(`${job.id} has failed with ${err.message}`);
+  return err;
+});
+
+const refreshTokenWorker = new Worker(
+  "refreshToken",
+  async (job) => {
+    try {
+      const id = job.data.id;
+      const accessToken = jwt.sign({ id }, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: "3m",
+      });
+
+      const refreshToken = jwt.sign({ id }, process.env.REFRESH_TOKEN_SECRET, {
+        expiresIn: "1d",
+      });
+
+      await CustomerModel.findOneAndUpdate(
+        { id },
+        { accessToken, refreshToken }
+      );
+
+      return {
+        accessToken,
+        refreshToken,
+      };
+    } catch (error) {
+      throw error;
+    }
+  },
+  REDIS_CONNECTION
+);
+
+refreshTokenWorker.on("completed", (job, returnvalue) => {
+  console.log(`${job.id} has completed!`);
+  return returnvalue;
+});
+
+refreshTokenWorker.on("failed", (job, err) => {
   console.log(`${job.id} has failed with ${err.message}`);
   return err;
 });

@@ -7,6 +7,7 @@ import Boom from "@hapi/boom";
 import ON_DEATH from "death";
 import { Queue, QueueEvents } from "bullmq";
 import { errorHandler } from "#middleware/errorHandler.mjs";
+import { verifyJwt } from "#middleware/verifyJwt.mjs";
 import { REDIS_CONNECTION } from "#constants/redis.mjs";
 
 const app = new Koa();
@@ -41,6 +42,7 @@ router.post("/register", async (ctx) => {
     const { customer, accessToken, refreshToken } = await job.waitUntilFinished(
       new QueueEvents("registration", REDIS_CONNECTION)
     );
+    ctx.status = 201;
     ctx.body = { customer, accessToken };
 
     ctx.cookies.set("cc_auth", refreshToken, {
@@ -49,20 +51,23 @@ router.post("/register", async (ctx) => {
       maxAge: 24 * 60 * 60 * 1000,
     });
   } catch (error) {
-    if (error.message === "User already exists") {
-      ctx.throw(400, error.message);
-    }
+    ctx.throw(400, "Username or password is invalid");
   }
 });
 
 router.post("/login", async (ctx) => {
   try {
     const job = await loginQueue.add("loginUser", ctx.request.body);
-    const customer = await job.waitUntilFinished(
+    const { customer, accessToken, refreshToken } = await job.waitUntilFinished(
       new QueueEvents("login", REDIS_CONNECTION)
     );
-    ctx.status = 201;
-    ctx.body = customer;
+    ctx.body = { customer, accessToken };
+
+    ctx.cookies.set("cc_auth", refreshToken, {
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
   } catch (error) {
     ctx.throw(401, "Username or password is incorrect");
   }
@@ -86,6 +91,17 @@ router.post("/refresh-token", async (ctx) => {
     sameSite: "strict",
     maxAge: 24 * 60 * 60 * 1000,
   });
+});
+
+router.get("/customer", verifyJwt, async (ctx) => {
+  const getCustomerJob = await getCustomerQueue.add("getCustomerData", {
+    id: ctx.request.userId,
+  });
+  const customer = await getCustomerJob.waitUntilFinished(
+    new QueueEvents("getCustomer", REDIS_CONNECTION)
+  );
+
+  return customer;
 });
 
 const server = app.listen(PORT);
