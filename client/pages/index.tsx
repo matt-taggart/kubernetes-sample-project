@@ -4,15 +4,17 @@ import AppLayout from "../components/AppLayout";
 
 function Home() {
   return (
-    <AppLayout>
-      <div style={{ padding: "1rem" }}>
-        <Typography>
-          <Typography.Title>My Cards</Typography.Title>
-        </Typography>
-      </div>
-    </AppLayout>
+    <div style={{ padding: "1rem" }}>
+      <Typography>
+        <Typography.Title>My Cards</Typography.Title>
+      </Typography>
+    </div>
   );
 }
+
+Home.getLayout = function getLayout(page) {
+  return <AppLayout>{page}</AppLayout>;
+};
 
 export async function getServerSideProps(context) {
   try {

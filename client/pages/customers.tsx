@@ -1,4 +1,5 @@
 import Head from "next/head";
+import AppLayout from "../components/AppLayout";
 
 export default function Customers() {
   return (
@@ -9,9 +10,11 @@ export default function Customers() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main>
-        This is the customers page
-      </main>
+      <main>This is the customers page</main>
     </>
   );
 }
+
+Customers.getLayout = function getLayout(page) {
+  return <AppLayout>{page}</AppLayout>;
+};
