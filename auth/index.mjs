@@ -5,7 +5,6 @@ import { REDIS_CONNECTION } from "#constants/redis.mjs";
 import { CustomerModel } from "#models/customer.mjs";
 
 const createCustomerQueue = new Queue("createCustomer", REDIS_CONNECTION);
-// const getCustomerQueue = new Queue("getCustomer", REDIS_CONNECTION);
 
 const init = async () => {
   await mongoose.connect(process.env.MONGODB_URL);
@@ -149,7 +148,7 @@ const refreshTokenWorker = new Worker(
       });
 
       await CustomerModel.findOneAndUpdate(
-        { id: mongoose.Types.ObjectId(id) },
+        { _id: mongoose.Types.ObjectId(id) },
         { accessToken, refreshToken }
       );
 

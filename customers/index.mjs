@@ -37,7 +37,9 @@ const getCustomerWorker = new Worker(
   "getCustomer",
   async (job) => {
     try {
-      return await CustomerModel.findOne({ id: job.data.id });
+      return await CustomerModel.findOne({
+        _id: mongoose.Types.ObjectId(job.data.id),
+      });
     } catch (error) {
       throw error;
     }
