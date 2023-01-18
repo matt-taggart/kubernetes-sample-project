@@ -6,7 +6,7 @@ function Home() {
   return (
     <div style={{ padding: "1rem" }}>
       <Typography>
-        <Typography.Title>My Cards</Typography.Title>
+        <Typography.Title>Create New Card</Typography.Title>
       </Typography>
     </div>
   );

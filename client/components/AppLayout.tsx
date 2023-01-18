@@ -7,17 +7,21 @@ import { GreetingCardSVG } from "../components/GreetingCardSVG";
 export default function AppLayout({ children }) {
   const items = [
     {
-      label: <NuxtLink href="/">My Cards</NuxtLink>,
+      label: <NuxtLink href="/">Create Card</NuxtLink>,
       key: "1",
     },
     {
-      label: <NuxtLink href="/images">Saved Images</NuxtLink>,
+      label: <NuxtLink href="/cards">My Cards</NuxtLink>,
       key: "2",
     },
     {
-      label: <NuxtLink href="/greetings">Saved Greetings</NuxtLink>,
+      label: <NuxtLink href="/images">Saved Images</NuxtLink>,
       key: "3",
     },
+{
+      label: <NuxtLink href="/greetings">Saved Greetings</NuxtLink>,
+      key: "4",
+    }
   ];
   const dropdownItems = [
     {
@@ -66,8 +70,11 @@ export default function AppLayout({ children }) {
           </Typography>
           <GreetingCardSVG />
         </div>
-        <Dropdown menu={{ items: dropdownItems }}>
-          <Button>
+        <Dropdown
+          overlayStyle={{ width: "100px" }}
+          menu={{ items: dropdownItems }}
+        >
+          <Button style={{ borderRadius: "100%", padding: "4px 10px" }}>
             <UserOutlined />
           </Button>
         </Dropdown>
