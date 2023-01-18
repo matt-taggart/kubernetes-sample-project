@@ -5,6 +5,7 @@ import cors from "kcors";
 import logger from "koa-pino-logger";
 import Boom from "@hapi/boom";
 import ON_DEATH from "death";
+import jwt from "jsonwebtoken";
 import { Queue, QueueEvents } from "bullmq";
 import { errorHandler } from "#middleware/errorHandler.mjs";
 import { verifyJwt } from "#middleware/verifyJwt.mjs";
@@ -18,10 +19,11 @@ const { PORT = 8080 } = process.env;
 const registrationQueue = new Queue("registration", REDIS_CONNECTION);
 const loginQueue = new Queue("login", REDIS_CONNECTION);
 const refreshTokenQueue = new Queue("refreshToken", REDIS_CONNECTION);
+const getCustomerQueue = new Queue("getCustomer", REDIS_CONNECTION);
 
 app.use(bodyParser());
 app.use(cors());
-app.use(logger());
+// app.use(logger());
 app.use(errorHandler());
 app.use(router.routes());
 app.use(
@@ -74,34 +76,40 @@ router.post("/login", async (ctx) => {
 });
 
 router.post("/refresh-token", async (ctx) => {
-  const authCookie = ctx.cookies.get("cc_auth");
-  if (!authCookie) {
-    ctx.throw(401);
+  try {
+    const authCookie = ctx.cookies.get("cc_auth");
+    if (!authCookie) {
+      ctx.throw(401);
+    }
+
+    const decoded = jwt.verify(authCookie, process.env.REFRESH_TOKEN_SECRET);
+
+    const job = await refreshTokenQueue.add("refresh", { id: decoded.id });
+    const { accessToken, refreshToken } = await job.waitUntilFinished(
+      new QueueEvents("refreshToken", REDIS_CONNECTION)
+    );
+
+    ctx.body = { accessToken };
+
+    ctx.cookies.set("cc_auth", refreshToken, {
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+  } catch (error) {
+    ctx.throw(400, "Please login to continue");
   }
-
-  const job = await refreshTokenQueue.add("refresh", ctx.request.body);
-  const { accessToken, refreshToken } = await job.waitUntilFinished(
-    new QueueEvents("refreshtoken", REDIS_CONNECTION)
-  );
-
-  ctx.body = { accessToken };
-
-  ctx.cookies.set("cc_auth", refreshToken, {
-    httpOnly: true,
-    sameSite: "strict",
-    maxAge: 24 * 60 * 60 * 1000,
-  });
 });
 
-router.get("/customer", verifyJwt, async (ctx) => {
+router.get("/customers", verifyJwt, async (ctx) => {
   const getCustomerJob = await getCustomerQueue.add("getCustomerData", {
-    id: ctx.request.userId,
+    id: ctx.state.userId,
   });
   const customer = await getCustomerJob.waitUntilFinished(
     new QueueEvents("getCustomer", REDIS_CONNECTION)
   );
 
-  return customer;
+  ctx.body = { customer };
 });
 
 const server = app.listen(PORT);

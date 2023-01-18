@@ -3,14 +3,12 @@ import AppLayout from "../components/AppLayout";
 
 export default function Profile() {
   return (
-    <div style={{ padding: "1rem" }}>
-      <Typography>
-        <Typography.Title>My Profile</Typography.Title>
-      </Typography>
-    </div>
+    <AppLayout>
+      <div style={{ padding: "1rem" }}>
+        <Typography>
+          <Typography.Title>My Profile</Typography.Title>
+        </Typography>
+      </div>
+    </AppLayout>
   );
 }
-
-Profile.getLayout = function getLayout(page) {
-  return <AppLayout>{page}</AppLayout>;
-};

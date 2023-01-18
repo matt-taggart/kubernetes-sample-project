@@ -98,7 +98,7 @@ const loginWorker = new Worker(
         throw new Error("Invalid password");
       }
 
-      const id = customer._id;
+      const id = customer._id.toString();
 
       const accessToken = jwt.sign({ id }, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: "3m",
@@ -149,7 +149,7 @@ const refreshTokenWorker = new Worker(
       });
 
       await CustomerModel.findOneAndUpdate(
-        { id },
+        { id: mongoose.Types.ObjectId(id) },
         { accessToken, refreshToken }
       );
 

@@ -9,7 +9,7 @@ export const verifyJwt = async (ctx, next) => {
   try {
     const accessToken = authHeader.split(" ")[1];
     const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
-    ctx.request.userId = { userId: decoded.id };
+    ctx.state.userId = decoded.id;
     await next();
   } catch (error) {
     ctx.throw(403);
