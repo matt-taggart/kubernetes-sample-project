@@ -23,11 +23,6 @@ const createCustomerWorker = new Worker(
   REDIS_CONNECTION
 );
 
-createCustomerWorker.on("completed", (job, returnvalue) => {
-  console.log(`${job.id} has completed!`);
-  return returnvalue;
-});
-
 createCustomerWorker.on("failed", (job, err) => {
   console.log(`${job.id} has failed with ${err.message}`);
   return err;
@@ -46,11 +41,6 @@ const getCustomerWorker = new Worker(
   },
   REDIS_CONNECTION
 );
-
-getCustomerWorker.on("completed", (job, returnvalue) => {
-  console.log(`${job.id} has completed!`);
-  return returnvalue;
-});
 
 getCustomerWorker.on("failed", (job, err) => {
   console.log(`${job.id} has failed with ${err.message}`);

@@ -124,11 +124,6 @@ const loginWorker = new Worker(
   REDIS_CONNECTION
 );
 
-loginWorker.on("completed", (job, returnvalue) => {
-  console.log(`${job.id} has completed!`);
-  return returnvalue;
-});
-
 loginWorker.on("failed", (job, err) => {
   console.log(`${job.id} has failed with ${err.message}`);
   return err;
@@ -162,11 +157,6 @@ const refreshTokenWorker = new Worker(
   },
   REDIS_CONNECTION
 );
-
-refreshTokenWorker.on("completed", (job, returnvalue) => {
-  console.log(`${job.id} has completed!`);
-  return returnvalue;
-});
 
 refreshTokenWorker.on("failed", (job, err) => {
   console.log(`${job.id} has failed with ${err.message}`);
