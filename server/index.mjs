@@ -22,6 +22,7 @@ const refreshTokenQueue = new Queue("refreshToken", REDIS_CONNECTION);
 const getCustomerQueue = new Queue("getCustomer", REDIS_CONNECTION);
 const updateCustomerQueue = new Queue("updateCustomer", REDIS_CONNECTION);
 const addGreetingQueue = new Queue("addGreeting", REDIS_CONNECTION);
+const getGreetingsQueue = new Queue("getGreetings", REDIS_CONNECTION);
 
 app.use(bodyParser());
 app.use(cors());
@@ -114,11 +115,27 @@ router.get("/customers", verifyJwt, async (ctx) => {
   ctx.body = { customer };
 });
 
+router.get("/greetings", verifyJwt, async (ctx) => {
+  try {
+    const getGreetingsJob = await getGreetingsQueue.add("get", {
+      userId: ctx.state.userId,
+    });
+    const greetings = await getGreetingsJob.waitUntilFinished(
+      new QueueEvents("getGreetings", REDIS_CONNECTION)
+    );
+
+    ctx.body = { greetings };
+  } catch (error) {
+    ctx.throw(400);
+  }
+});
+
 router.post("/greeting", verifyJwt, async (ctx) => {
   try {
     const addGreetingJob = await addGreetingQueue.add("add", {
       prompt: ctx.request.body.prompt,
       generatedText: "This is some sample generated text",
+      userId: ctx.state.userId,
     });
     const greeting = await addGreetingJob.waitUntilFinished(
       new QueueEvents("addGreeting", REDIS_CONNECTION)
