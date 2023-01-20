@@ -1,4 +1,4 @@
-import { Typography, Input, Button, Form } from "antd";
+import { Typography, Input, Button, Form, notification } from "antd";
 import axios from "axios";
 import AppLayout from "../components/AppLayout";
 
@@ -9,8 +9,10 @@ type Props = {
 };
 
 function AddGreeting({ accessToken }: Props) {
+  const [api, contextHolder] = notification.useNotification();
+
   const onFinish = async (values: any) => {
-    const response = await axios({
+    await axios({
       url: "/v1/greeting",
       method: "post",
       data: values,
@@ -19,9 +21,14 @@ function AddGreeting({ accessToken }: Props) {
         authorization: `Bearer ${accessToken}`,
       },
     });
+
+    api["success"]({
+      message: "Greeting saved!",
+    });
   };
   return (
     <div className="stack" style={{ padding: "1rem" }}>
+      {contextHolder}
       <Title level={3}>Add Greeting</Title>
       <div style={{ width: "min(100%, 400px)" }}>
         <Text>
@@ -96,7 +103,10 @@ export async function getServerSideProps(context) {
       };
     } catch (error) {
       return {
-        props: { error: error.message },
+        redirect: {
+          permanent: false,
+          destination: "/login",
+        },
       };
     }
   } catch (error) {

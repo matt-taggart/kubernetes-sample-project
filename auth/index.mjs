@@ -39,7 +39,7 @@ const registrationWorker = new Worker(
           id: customer._id,
         },
         process.env.ACCESS_TOKEN_SECRET,
-        { expiresIn: "1m" }
+        { expiresIn: "30m" }
       );
 
       const refreshToken = jwt.sign(
@@ -135,7 +135,7 @@ const refreshTokenWorker = new Worker(
     try {
       const id = job.data.id;
       const accessToken = jwt.sign({ id }, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: "3m",
+        expiresIn: "30m",
       });
 
       const refreshToken = jwt.sign({ id }, process.env.REFRESH_TOKEN_SECRET, {
