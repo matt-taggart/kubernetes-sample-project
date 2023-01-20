@@ -10,17 +10,21 @@ export default function AppLayout({ children }) {
       label: <NuxtLink href="/">Create Card</NuxtLink>,
       key: "1",
     },
-    {
-      label: <NuxtLink href="/cards">My Cards</NuxtLink>,
+{
+      label: <NuxtLink href="/add-greeting">Add Greeting</NuxtLink>,
       key: "2",
     },
     {
-      label: <NuxtLink href="/images">Saved Images</NuxtLink>,
+      label: <NuxtLink href="/cards">My Cards</NuxtLink>,
       key: "3",
+    },
+    {
+      label: <NuxtLink href="/images">Saved Images</NuxtLink>,
+      key: "4",
     },
 {
       label: <NuxtLink href="/greetings">Saved Greetings</NuxtLink>,
-      key: "4",
+      key: "5",
     }
   ];
   const dropdownItems = [

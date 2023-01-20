@@ -46,3 +46,32 @@ getCustomerWorker.on("failed", (job, err) => {
   console.log(`${job.id} has failed with ${err.message}`);
   return err;
 });
+
+const updateCustomerWorker = new Worker(
+  "updateCustomer",
+  async (job) => {
+    try {
+      const customer = await CustomerModel.findOneAndUpdate(
+        { _id: mongoose.Types.ObjectId(job.data.userId) },
+        {
+          $push: {
+            greetings: {
+              _id: mongoose.Types.ObjectId(job.data.greeting.id),
+              greeting: job.data.greeting.prompt,
+              generatedText: job.data.greeting.generatedText,
+            },
+          },
+        }
+      );
+      return customer;
+    } catch (error) {
+      throw error;
+    }
+  },
+  REDIS_CONNECTION
+);
+
+updateCustomerWorker.on("failed", (job, err) => {
+  console.log(`${job.id} has failed with ${err.message}`);
+  return err;
+});

@@ -5,7 +5,7 @@ export default function Greetings() {
   return (
     <div style={{ padding: "1rem" }}>
       <Typography>
-        <Typography.Title>Saved Greetings</Typography.Title>
+        <Typography.Title level={3}>Saved Greetings</Typography.Title>
       </Typography>
     </div>
   );

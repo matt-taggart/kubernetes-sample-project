@@ -1,18 +1,59 @@
-import { Typography, Input } from "antd";
+import { Typography, Input, Button, Form } from "antd";
 import axios from "axios";
 import AppLayout from "../components/AppLayout";
 
 const { Title, Text } = Typography;
 
-function Home() {
+type Props = {
+  accessToken: string;
+};
+
+function AddGreeting({ accessToken }: Props) {
+  const onFinish = async (values: any) => {
+    const response = await axios({
+      url: "/v1/greeting",
+      method: "post",
+      data: values,
+      withCredentials: true,
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+      },
+    });
+  };
   return (
     <div className="stack" style={{ padding: "1rem" }}>
-      <Title level={3}>Create New Card</Title>
+      <Title level={3}>Add Greeting</Title>
+      <div style={{ width: "min(100%, 400px)" }}>
+        <Text>
+          Write a brief description of the greeting that you would like to
+          generate.
+        </Text>
+        <Form
+          name="basic"
+          wrapperCol={{ span: 24 }}
+          initialValues={{ description: "" }}
+          onFinish={onFinish}
+          autoComplete="off"
+        >
+          <Form.Item
+            name="prompt"
+            rules={[{ required: true, message: "Please enter a description" }]}
+          >
+            <Input.TextArea showCount maxLength={100} rows={4} />
+          </Form.Item>
+
+          <Form.Item wrapperCol={{ span: 24 }}>
+            <Button type="primary" htmlType="submit">
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
     </div>
   );
 }
 
-Home.getLayout = function getLayout(page) {
+AddGreeting.getLayout = function getLayout(page) {
   return <AppLayout>{page}</AppLayout>;
 };
 
@@ -68,4 +109,4 @@ export async function getServerSideProps(context) {
   }
 }
 
-export default Home;
+export default AddGreeting;

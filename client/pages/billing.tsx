@@ -5,7 +5,7 @@ export default function Billing() {
   return (
     <div style={{ padding: "1rem" }}>
       <Typography>
-        <Typography.Title>Billing Info</Typography.Title>
+        <Typography.Title level={3}>Billing Info</Typography.Title>
       </Typography>
     </div>
   );

@@ -9,6 +9,7 @@ const customerSchema = new mongoose.Schema({
   password: String,
   accessToken: String,
   refreshToken: String,
+  greetings: [{ type: mongoose.Schema.Types.ObjectId, ref: "Greeting" }],
 });
 
 customerSchema.pre("save", async function (next) {

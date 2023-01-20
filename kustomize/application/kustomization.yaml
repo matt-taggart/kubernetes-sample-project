@@ -7,4 +7,6 @@ resources:
   - auth-service.yaml
   - customers-deployment.yaml
   - customers-service.yaml
+  - greetings-deployment.yaml
+  - greetings-service.yaml
   - ingress-service.yaml

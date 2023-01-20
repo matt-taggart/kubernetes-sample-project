@@ -20,6 +20,8 @@ const registrationQueue = new Queue("registration", REDIS_CONNECTION);
 const loginQueue = new Queue("login", REDIS_CONNECTION);
 const refreshTokenQueue = new Queue("refreshToken", REDIS_CONNECTION);
 const getCustomerQueue = new Queue("getCustomer", REDIS_CONNECTION);
+const updateCustomerQueue = new Queue("updateCustomer", REDIS_CONNECTION);
+const addGreetingQueue = new Queue("addGreeting", REDIS_CONNECTION);
 
 app.use(bodyParser());
 app.use(cors());
@@ -110,6 +112,33 @@ router.get("/customers", verifyJwt, async (ctx) => {
   );
 
   ctx.body = { customer };
+});
+
+router.post("/greeting", verifyJwt, async (ctx) => {
+  try {
+    const addGreetingJob = await addGreetingQueue.add("add", {
+      prompt: ctx.request.body.prompt,
+      generatedText: "This is some sample generated text",
+    });
+    const greeting = await addGreetingJob.waitUntilFinished(
+      new QueueEvents("addGreeting", REDIS_CONNECTION)
+    );
+
+    const updateCustomerJob = await updateCustomerQueue.add(
+      "updateCustomerData",
+      {
+        userId: ctx.state.userId,
+        greeting,
+      }
+    );
+    const customer = await updateCustomerJob.waitUntilFinished(
+      new QueueEvents("updateCustomer", REDIS_CONNECTION)
+    );
+
+    ctx.body = { customer, greeting };
+  } catch (error) {
+    ctx.throw(400);
+  }
 });
 
 const server = app.listen(PORT);

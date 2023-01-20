@@ -50,4 +50,17 @@ docker_build(
     ]
 )
 
+docker_build(
+    'us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/greetings',
+    context='./greetings',
+    dockerfile='./greetings/Dockerfile.greetings.dev',
+    live_update=[
+        sync('./greetings', '/app'),
+        run(
+            'pnpm install',
+            trigger=['./greetings/package.json']
+        )
+    ]
+)
+
 k8s_yaml(kustomize('./kustomize/environments/development', flags = ["--enable-alpha-plugins"]))

@@ -5,7 +5,7 @@ export default function Images() {
   return (
     <div style={{ padding: "1rem" }}>
       <Typography>
-        <Typography.Title>Saved Images</Typography.Title>
+        <Typography.Title level={3}>Saved Images</Typography.Title>
       </Typography>
     </div>
   );

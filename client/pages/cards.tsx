@@ -5,7 +5,7 @@ export default function Cards() {
   return (
     <div style={{ padding: "1rem" }}>
       <Typography>
-        <Typography.Title>My Cards</Typography.Title>
+        <Typography.Title level={3}>My Cards</Typography.Title>
       </Typography>
     </div>
   );
