@@ -1,15 +1,11 @@
 import { useRouter } from "next/router";
-import { Button, Form, Input, Typography } from "antd";
-import Image from "next/image";
 import NuxtLink from "next/link";
 import axios from "axios";
 import AuthLayout from "../components/AuthLayout";
-import CardImage from "../public/moody-card.jpg";
-import styles from "../styles/login.module.css";
 
 export default function Register() {
   const router = useRouter();
-  const onFinish = async (values: any) => {
+  const onSubmit = async (values: any) => {
     await axios({
       url: "/v1/register",
       method: "post",
@@ -19,73 +15,148 @@ export default function Register() {
     router.push("/");
   };
   return (
-    <div className={styles.container}>
-      <Image
-        className={styles.photo}
-        src={CardImage}
-        alt="Greeting card on table"
-      />
-      <div className={styles.form}>
-        <Form
-          name="basic"
-          labelCol={{ span: 4 }}
-          wrapperCol={{ span: 16 }}
-          initialValues={{ remember: true }}
-          onFinish={onFinish}
-          autoComplete="off"
-        >
-          <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
-            <Typography>
-              <Typography.Title style={{ marginBottom: 0 }}>
-                Register
-              </Typography.Title>
-            </Typography>
-          </Form.Item>
-          <Form.Item
-            label="First Name"
-            name="firstName"
-            rules={[
-              { required: true, message: "Please enter your first name" },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Last Name"
-            name="lastName"
-            rules={[{ required: true, message: "Please enter your last name" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            label="Email"
-            name="email"
-            rules={[{ required: true, message: "Please enter your email" }]}
-          >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            label="Password"
-            name="password"
-            rules={[{ required: true, message: "Please enter your password" }]}
-          >
-            <Input.Password />
-          </Form.Item>
-
-          <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          </Form.Item>
-          <Form.Item wrapperCol={{ offset: 4, span: 16 }}>
-            <Typography.Text type="secondary">
-              Already have an account? <NuxtLink href="/login">Login</NuxtLink>
-            </Typography.Text>
-          </Form.Item>
-        </Form>
+    <>
+      <div
+        id="register-area"
+        className="relative py-12 bg-gray-100 dark:bg-gray-900 dark:bg-opacity-40"
+      >
+        <div className="container xl:max-w-6xl mx-auto px-4">
+          <div className="flex flex-wrap flex-row -mx-4 justify-center">
+            <div className="max-w-full w-full md:w-2/3 lg:w-1/2 px-6 sm:px-12">
+              <div className="relative">
+                <div className="p-6 sm:py-8 sm:px-12 rounded-lg bg-white dark:bg-gray-800 shadow-xl">
+                  <form id="register-form">
+                    <h1 className="text-2xl leading-normal mb-6 font-bold text-gray-800  dark:text-gray-300 text-center">
+                      Register
+                    </h1>
+                    <hr className="block w-12 h-0.5 mx-auto my-5 bg-gray-700 border-gray-700" />
+                    <div className="mb-6">
+                      <input
+                        name="name"
+                        className="w-full leading-5 relative py-2 px-4 rounded text-gray-800 bg-white border border-gray-300 overflow-x-auto focus:outline-none focus:border-gray-400 focus:ring-0 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-700 dark:focus:border-gray-600"
+                        placeholder="Full Name"
+                        aria-label="full name"
+                        type="text"
+                        required
+                      />
+                    </div>
+                    <div className="mb-6">
+                      <input
+                        name="email"
+                        className="w-full leading-5 relative py-2 px-4 rounded text-gray-800 bg-white border border-gray-300 overflow-x-auto focus:outline-none focus:border-gray-400 focus:ring-0 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-700 dark:focus:border-gray-600"
+                        placeholder="Email address"
+                        aria-label="email"
+                        type="email"
+                        required
+                      />
+                    </div>
+                    <div className="mb-6">
+                      <input
+                        className="w-full leading-5 relative py-2 px-4 rounded text-gray-800 bg-white border border-gray-300 overflow-x-auto focus:outline-none focus:border-gray-400 focus:ring-0 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-700 dark:focus:border-gray-600"
+                        placeholder="Password"
+                        aria-label="password"
+                        type="password"
+                        required
+                      />
+                    </div>
+                    <div className="mb-6">
+                      <input
+                        className="w-full leading-5 relative py-2 px-4 rounded text-gray-800 bg-white border border-gray-300 overflow-x-auto focus:outline-none focus:border-gray-400 focus:ring-0 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-700 dark:focus:border-gray-600"
+                        placeholder="Confirm Password"
+                        aria-label="confirm password"
+                        type="password"
+                        required
+                      />
+                    </div>
+                    <div className="mb-6">
+                      <input
+                        className="form-checkbox h-5 w-5 text-indigo-500 dark:bg-gray-700 border border-gray-300 dark:border-gray-700 rounded focus:outline-none"
+                        type="checkbox"
+                        id="terms"
+                        required
+                      />
+                      <label className="ml-2 mr-2" htmlFor="terms">
+                        I agree to the <a href="#">Terms and Conditions</a>
+                      </label>
+                    </div>
+                    <div className="grid">
+                      <button
+                        type="submit"
+                        className="py-2 px-4 inline-block text-center rounded leading-normal text-gray-100 bg-indigo-500 border border-indigo-500 hover:text-white hover:bg-indigo-600 hover:ring-0 hover:border-indigo-600 focus:bg-indigo-600 focus:border-indigo-600 focus:outline-none focus:ring-0"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                          className="inline-block w-4 h-4 mr-2 ml-2 bi bi-box-arrow-in-right"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0v-2z"
+                          />
+                          <path
+                            fillRule="evenodd"
+                            d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"
+                          />
+                        </svg>
+                        Register
+                      </button>
+                    </div>
+                  </form>
+                  <div className="mt-3">
+                    <p className="text-center mb-4">
+                      Already have an account?{" "}
+                      <NuxtLink className="hover:text-indigo-500" href="/login">
+                        Login
+                      </NuxtLink>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+
+      <footer className="bg-white p-6 border-t border-gray-200 dark:bg-gray-800 dark:border-gray-800">
+        <div className="mx-auto px-4">
+          <div className="flex flex-wrap flex-row -mx-4">
+            <div className="flex-shrink max-w-full px-4 w-full md:w-1/2 text-center md:text-left md:text-right">
+              <ul className="pl-0 pr-0">
+                <li className="inline-block mr-3 ml-3">
+                  <a className="hover:text-indigo-500" href="#">
+                    Support
+                  </a>
+                </li>
+                <li className="inline-block mr-3 ml-3">
+                  <a className="hover:text-indigo-500" href="#">
+                    Help Center
+                  </a>
+                </li>
+                <li className="inline-block mr-3 ml-3">
+                  <a className="hover:text-indigo-500" href="#">
+                    Privacy
+                  </a>
+                </li>
+                <li className="inline-block mr-3 ml-3">
+                  <a className="hover:text-indigo-500" href="#">
+                    Terms of Service
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div className="flex-shrink max-w-full px-4 w-full md:w-1/2 text-center md:text-right md:text-left">
+              <p className="mb-0 mt-3 md:mt-0">
+                <a href="" className="hover:text-indigo-500">
+                  Card Couture
+                </a>{" "}
+                | All right reserved
+              </p>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </>
   );
 }
 

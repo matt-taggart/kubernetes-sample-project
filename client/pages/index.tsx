@@ -1,13 +1,10 @@
-import { Typography, Input } from "antd";
 import axios from "axios";
 import AppLayout from "../components/AppLayout";
-
-const { Title, Text } = Typography;
 
 function Home() {
   return (
     <div className="stack" style={{ padding: "1rem" }}>
-      <Title level={3}>Create New Card</Title>
+      Create New Card
     </div>
   );
 }

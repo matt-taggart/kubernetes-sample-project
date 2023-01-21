@@ -1,6 +1,3 @@
-import { Typography } from "antd";
-import { GreetingCardSVG } from "../components/GreetingCardSVG";
-
 export default function AppLayout({ children }) {
   return (
     <>
@@ -19,16 +16,7 @@ export default function AppLayout({ children }) {
           borderBottom: "1px solid rgba(5, 5, 5, 0.06)",
         }}
       >
-        <div className="hstack" style={{ "--space": "0.5rem" }}>
-          <Typography>
-            <Typography.Paragraph
-              style={{ fontSize: "1.2rem", marginBottom: "0" }}
-            >
-              Card Couture
-            </Typography.Paragraph>
-          </Typography>
-          <GreetingCardSVG />
-        </div>
+        Card Couture
       </div>
       <main>{children}</main>
     </>

@@ -1,14 +1,7 @@
-import { Typography } from "antd";
 import AppLayout from "../components/AppLayout";
 
 export default function Profile() {
-  return (
-    <div style={{ padding: "1rem" }}>
-      <Typography>
-        <Typography.Title>My Profile</Typography.Title>
-      </Typography>
-    </div>
-  );
+  return <div style={{ padding: "1rem" }}>My Profile</div>;
 }
 
 Profile.getLayout = function getLayout(page) {

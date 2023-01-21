@@ -1,5 +1,4 @@
 import { useEffect, useState, useMemo } from "react";
-import { Typography, List } from "antd";
 import axios from "axios";
 import AppLayout from "../components/AppLayout";
 
@@ -25,25 +24,7 @@ export default function Greetings({ accessToken }) {
   useEffect(() => {
     fetchGreetings();
   }, [fetchGreetings]);
-  return (
-    <div style={{ padding: "1rem" }}>
-      <Typography>
-        <Typography.Title level={3}>Saved Greetings</Typography.Title>
-        <List
-          itemLayout="horizontal"
-          dataSource={greetings}
-          renderItem={(item) => (
-            <List.Item>
-              <List.Item.Meta
-                title={item.prompt}
-                description={item.generatedText}
-              />
-            </List.Item>
-          )}
-        />
-      </Typography>
-    </div>
-  );
+  return <div style={{ padding: "1rem" }}>Greetings page</div>;
 }
 
 export async function getServerSideProps(context) {

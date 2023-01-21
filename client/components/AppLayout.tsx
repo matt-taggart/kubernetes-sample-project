@@ -1,8 +1,5 @@
 import Head from "next/head";
 import NuxtLink from "next/link";
-import { Menu, Dropdown, Button, Typography } from "antd";
-import { UserOutlined } from "@ant-design/icons";
-import { GreetingCardSVG } from "../components/GreetingCardSVG";
 
 export default function AppLayout({ children }) {
   const items = [
@@ -10,7 +7,7 @@ export default function AppLayout({ children }) {
       label: <NuxtLink href="/">Create Card</NuxtLink>,
       key: "1",
     },
-{
+    {
       label: <NuxtLink href="/add-greeting">Add Greeting</NuxtLink>,
       key: "2",
     },
@@ -22,10 +19,10 @@ export default function AppLayout({ children }) {
       label: <NuxtLink href="/images">Saved Images</NuxtLink>,
       key: "4",
     },
-{
+    {
       label: <NuxtLink href="/greetings">Saved Greetings</NuxtLink>,
       key: "5",
-    }
+    },
   ];
   const dropdownItems = [
     {
@@ -64,45 +61,9 @@ export default function AppLayout({ children }) {
           borderBottom: "1px solid rgba(5, 5, 5, 0.06)",
         }}
       >
-        <div className="hstack" style={{ "--space": "0.5rem" }}>
-          <Typography>
-            <Typography.Paragraph
-              style={{ fontSize: "1.2rem", marginBottom: "0" }}
-            >
-              Card Couture
-            </Typography.Paragraph>
-          </Typography>
-          <GreetingCardSVG />
-        </div>
-        <Dropdown
-          overlayStyle={{ width: "100px" }}
-          menu={{ items: dropdownItems }}
-        >
-          <Button style={{ borderRadius: "100%", padding: "4px 10px" }}>
-            <UserOutlined />
-          </Button>
-        </Dropdown>
+        Header
       </div>
-      <main>
-        <div>
-          <div className="with-sidebar">
-            <div>
-              <Menu
-                style={{
-                  width: 256,
-                  minHeight: "100vh",
-                  position: "sticky",
-                  top: 0,
-                }}
-                defaultSelectedKeys={["1"]}
-                defaultOpenKeys={["sub1"]}
-                items={items}
-              />
-            </div>
-            <div>{children}</div>
-          </div>
-        </div>
-      </main>
+      <main>{children}</main>
     </>
   );
 }

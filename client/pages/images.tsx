@@ -1,14 +1,7 @@
-import { Typography } from "antd";
 import AppLayout from "../components/AppLayout";
 
 export default function Images() {
-  return (
-    <div style={{ padding: "1rem" }}>
-      <Typography>
-        <Typography.Title level={3}>Saved Images</Typography.Title>
-      </Typography>
-    </div>
-  );
+  return <div style={{ padding: "1rem" }}>Images</div>;
 }
 
 Images.getLayout = function getLayout(page) {
