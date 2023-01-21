@@ -51,11 +51,16 @@ export async function getServerSideProps(context) {
         },
       };
     } catch (error) {
+      console.log("%cerror", "color:cyan; ", error);
       return {
-        props: { error: error.message },
+        redirect: {
+          permanent: false,
+          destination: "/login",
+        },
       };
     }
   } catch (error) {
+    console.log("%cerror", "color:cyan; ", error);
     return {
       redirect: {
         permanent: false,

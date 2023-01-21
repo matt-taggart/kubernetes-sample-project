@@ -61,7 +61,7 @@ export default function AppLayout({ children }) {
           borderBottom: "1px solid rgba(5, 5, 5, 0.06)",
         }}
       >
-        Header
+        Card Couture
       </div>
       <main>{children}</main>
     </>

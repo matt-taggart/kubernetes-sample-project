@@ -1,83 +1,155 @@
 import { useRouter } from "next/router";
 import NuxtLink from "next/link";
 import axios from "axios";
+import { useForm } from "react-hook-form";
+import clsx from "clsx";
 import AuthLayout from "../components/AuthLayout";
 
 export default function Register() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ mode: "all" });
   const router = useRouter();
+
   const onSubmit = async (values: any) => {
     await axios({
       url: "/v1/register",
       method: "post",
-      data: values,
+      data: {
+        fullName: values.fullName,
+        email: values.email,
+        password: values.password,
+      },
       withCredentials: true,
     });
     router.push("/");
   };
   return (
     <>
-      <div
-        id="register-area"
-        className="relative py-12 bg-gray-100 dark:bg-gray-900 dark:bg-opacity-40"
-      >
+      <div className="relative py-12 bg-gray-100 dark:bg-gray-900 dark:bg-opacity-40">
         <div className="container xl:max-w-6xl mx-auto px-4">
           <div className="flex flex-wrap flex-row -mx-4 justify-center">
             <div className="max-w-full w-full md:w-2/3 lg:w-1/2 px-6 sm:px-12">
               <div className="relative">
                 <div className="p-6 sm:py-8 sm:px-12 rounded-lg bg-white dark:bg-gray-800 shadow-xl">
-                  <form id="register-form">
+                  <form onSubmit={handleSubmit(onSubmit)}>
                     <h1 className="text-2xl leading-normal mb-6 font-bold text-gray-800  dark:text-gray-300 text-center">
                       Register
                     </h1>
                     <hr className="block w-12 h-0.5 mx-auto my-5 bg-gray-700 border-gray-700" />
-                    <div className="mb-6">
+                    <div
+                      className={clsx("mb-6 form-group", {
+                        "has-danger": errors.fullName,
+                      })}
+                    >
                       <input
-                        name="name"
+                        {...register("fullName", {
+                          required: "Full name is required",
+                        })}
                         className="w-full leading-5 relative py-2 px-4 rounded text-gray-800 bg-white border border-gray-300 overflow-x-auto focus:outline-none focus:border-gray-400 focus:ring-0 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-700 dark:focus:border-gray-600"
                         placeholder="Full Name"
                         aria-label="full name"
                         type="text"
-                        required
                       />
+                      {errors.fullName && (
+                        <div className="pristine-error text-help">
+                          {errors.fullName.message}
+                        </div>
+                      )}
                     </div>
-                    <div className="mb-6">
+                    <div
+                      className={clsx("mb-6 form-group", {
+                        "has-danger": errors.email,
+                      })}
+                    >
                       <input
-                        name="email"
+                        {...register("email", {
+                          required: "Email address is required",
+                          pattern: {
+                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                            message: "Invalid email address",
+                          },
+                        })}
                         className="w-full leading-5 relative py-2 px-4 rounded text-gray-800 bg-white border border-gray-300 overflow-x-auto focus:outline-none focus:border-gray-400 focus:ring-0 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-700 dark:focus:border-gray-600"
                         placeholder="Email address"
                         aria-label="email"
                         type="email"
-                        required
                       />
+                      {errors.email && (
+                        <div className="pristine-error text-help">
+                          {errors.email.message}
+                        </div>
+                      )}
                     </div>
-                    <div className="mb-6">
+                    <div
+                      className={clsx("mb-6 form-group", {
+                        "has-danger": errors.password,
+                      })}
+                    >
                       <input
+                        {...register("password", {
+                          required: "Password is required",
+                        })}
                         className="w-full leading-5 relative py-2 px-4 rounded text-gray-800 bg-white border border-gray-300 overflow-x-auto focus:outline-none focus:border-gray-400 focus:ring-0 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-700 dark:focus:border-gray-600"
                         placeholder="Password"
                         aria-label="password"
                         type="password"
-                        required
                       />
+                      {errors.password && (
+                        <div className="pristine-error text-help">
+                          {errors.password.message}
+                        </div>
+                      )}
                     </div>
-                    <div className="mb-6">
+                    <div
+                      className={clsx("mb-6 form-group", {
+                        "has-danger": errors.confirmPassword,
+                      })}
+                    >
                       <input
+                        {...register("confirmPassword", {
+                          required: "You must confirm your password",
+                          validate: (confirmPassword, { password }) => {
+                            return (
+                              password === confirmPassword ||
+                              "Passwords must match"
+                            );
+                          },
+                        })}
                         className="w-full leading-5 relative py-2 px-4 rounded text-gray-800 bg-white border border-gray-300 overflow-x-auto focus:outline-none focus:border-gray-400 focus:ring-0 dark:text-gray-300 dark:bg-gray-700 dark:border-gray-700 dark:focus:border-gray-600"
                         placeholder="Confirm Password"
                         aria-label="confirm password"
                         type="password"
-                        required
                       />
+                      {errors.confirmPassword && (
+                        <div className="pristine-error text-help">
+                          {errors.confirmPassword.message}
+                        </div>
+                      )}
                     </div>
-                    <div className="mb-6">
+                    <div
+                      className={clsx("mb-6 form-group", {
+                        "has-danger": errors.termsAndConditions,
+                      })}
+                    >
                       <input
                         className="form-checkbox h-5 w-5 text-indigo-500 dark:bg-gray-700 border border-gray-300 dark:border-gray-700 rounded focus:outline-none"
                         type="checkbox"
                         id="terms"
-                        required
+                        {...register("termsAndConditions", {
+                          required: "You must accept the terms and conditions",
+                        })}
                       />
                       <label className="ml-2 mr-2" htmlFor="terms">
                         I agree to the <a href="#">Terms and Conditions</a>
                       </label>
+                      {errors.termsAndConditions && (
+                        <div className="pristine-error text-help">
+                          {errors.termsAndConditions.message}
+                        </div>
+                      )}
                     </div>
                     <div className="grid">
                       <button
