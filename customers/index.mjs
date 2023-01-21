@@ -15,12 +15,7 @@ const createCustomerWorker = new Worker(
   "createCustomer",
   async (job) => {
     try {
-      const customer = await CustomerModel.create(job.data);
-      return {
-        fullName: customer.fullName,
-        email: customer.email,
-        greetings: customer.greetings,
-      };
+      return await CustomerModel.create(job.data);
     } catch (error) {
       throw error;
     }
@@ -37,14 +32,9 @@ const getCustomerWorker = new Worker(
   "getCustomer",
   async (job) => {
     try {
-      const customer = await CustomerModel.findOne({
+      return await CustomerModel.findOne({
         _id: mongoose.Types.ObjectId(job.data.id),
       });
-      return {
-        fullName: customer.fullName,
-        email: customer.email,
-        greetings: customer.greetings,
-      };
     } catch (error) {
       throw error;
     }
@@ -61,7 +51,7 @@ const updateCustomerWorker = new Worker(
   "updateCustomer",
   async (job) => {
     try {
-      const customer = await CustomerModel.findOneAndUpdate(
+      return await CustomerModel.findOneAndUpdate(
         { _id: mongoose.Types.ObjectId(job.data.userId) },
         {
           $push: {
@@ -73,11 +63,6 @@ const updateCustomerWorker = new Worker(
           },
         }
       );
-      return {
-        fullName: customer.fullName,
-        email: customer.email,
-        greetings: customer.greetings,
-      };
     } catch (error) {
       throw error;
     }
