@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useRouter } from "next/router";
 import NuxtLink from "next/link";
 import axios from "axios";
@@ -6,25 +7,37 @@ import clsx from "clsx";
 import AuthLayout from "../components/AuthLayout";
 
 export default function Register() {
+  const [loading, setLoading] = useState(false);
+  const [serverError, setServerError] = useState("");
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm({ mode: "all" });
   const router = useRouter();
 
+  watch(() => setServerError(""));
+
   const onSubmit = async (values: any) => {
-    await axios({
-      url: "/v1/register",
-      method: "post",
-      data: {
-        fullName: values.fullName,
-        email: values.email,
-        password: values.password,
-      },
-      withCredentials: true,
-    });
-    router.push("/");
+    setLoading(true);
+    try {
+      await axios({
+        url: "/v1/register",
+        method: "post",
+        data: {
+          fullName: values.fullName,
+          email: values.email,
+          password: values.password,
+        },
+        withCredentials: true,
+      });
+      setLoading(false);
+      router.push("/");
+    } catch (error) {
+      setLoading(false);
+      setServerError("Username already exists");
+    }
   };
   return (
     <>
@@ -154,27 +167,57 @@ export default function Register() {
                     <div className="grid">
                       <button
                         type="submit"
+                        disabled={loading}
                         className="py-2 px-4 inline-block text-center rounded leading-normal text-gray-100 bg-indigo-500 border border-indigo-500 hover:text-white hover:bg-indigo-600 hover:ring-0 hover:border-indigo-600 focus:bg-indigo-600 focus:border-indigo-600 focus:outline-none focus:ring-0"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="currentColor"
-                          className="inline-block w-4 h-4 mr-2 ml-2 bi bi-box-arrow-in-right"
-                          viewBox="0 0 16 16"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0v-2z"
-                          />
-                          <path
-                            fillRule="evenodd"
-                            d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"
-                          />
-                        </svg>
-                        Register
+                        {loading ? (
+                          <svg
+                            className="inline-block w-4 h-4 mr-2 ml-2 bi bi-box-arrow-in-right animate-spin"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                          >
+                            <circle
+                              className="opacity-25"
+                              cx="12"
+                              cy="12"
+                              r="10"
+                              stroke="currentColor"
+                              stroke-width="4"
+                            ></circle>
+                            <path
+                              className="opacity-75"
+                              fill="currentColor"
+                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            ></path>
+                          </svg>
+                        ) : (
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="currentColor"
+                            className="inline-block w-4 h-4 mr-2 ml-2 bi bi-box-arrow-in-right"
+                            viewBox="0 0 16 16"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M6 3.5a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 0-1 0v2A1.5 1.5 0 0 0 6.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-8A1.5 1.5 0 0 0 5 3.5v2a.5.5 0 0 0 1 0v-2z"
+                            />
+                            <path
+                              fillRule="evenodd"
+                              d="M11.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H1.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"
+                            />
+                          </svg>
+                        )}
+
+                        {loading ? "Loading..." : "Register"}
                       </button>
                     </div>
                   </form>
+                  {serverError && (
+                    <div className="relative bg-red-100 text-red-900 py-3 px-6 rounded mb-4 mt-6">
+                      {serverError}
+                    </div>
+                  )}
                   <div className="mt-3">
                     <p className="text-center mb-4">
                       Already have an account?{" "}
