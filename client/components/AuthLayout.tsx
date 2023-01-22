@@ -1,4 +1,4 @@
-export default function AppLayout({ children }) {
+export default function AuthLayout({ children }) {
   return (
     <>
       <div

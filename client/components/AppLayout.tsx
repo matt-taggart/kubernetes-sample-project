@@ -1,13 +1,19 @@
 import Head from "next/head";
 import NuxtLink from "next/link";
-import { useState } from "react";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import * as Avatar from "@radix-ui/react-avatar";
+import {
+  Plus,
+  Image as ImageIcon,
+  Edit3,
+  LayoutTemplate,
+  User,
+  LogOut
+} from "lucide-react";
 import { GreetingCardSVG } from "./GreetingCardSVG";
+import { FancyGreetingCard } from "./FancyGreetingCard";
 
 export default function AppLayout({ children }) {
-  const [tooltipState, setTooltipState] = useState(false);
-  console.log("%ctooltipState", "color:cyan; ", tooltipState);
   return (
     <>
       <Head>
@@ -72,17 +78,9 @@ export default function AppLayout({ children }) {
             <li className="relative">
               <NuxtLink
                 href="/"
-                className="block py-2.5 px-6 hover:text-indigo-500 dark:hover:text-gray-300 text-indigo-500 dark:text-gray-300"
+                className="block py-2.5 px-6 hover:text-indigo-500 text-indigo-500 flex align-center"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  className="inline-block h-4 w-4 mr-2 ml-2 bi bi-layout-sidebar-inset"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M14 2a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12zM2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H2z"></path>
-                  <path d="M3 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z"></path>
-                </svg>
+                <Plus className="inline-block h-4 w-4 mr-2 ml-2 bi bi-card-list" />
                 <span>Create New</span>
               </NuxtLink>
             </li>
@@ -97,18 +95,9 @@ export default function AppLayout({ children }) {
             <li className="relative">
               <NuxtLink
                 href="/cards"
-                className="block py-2.5 px-6 hover:text-indigo-500 dark:hover:text-gray-300"
+                className="block py-2.5 px-6 hover:text-indigo-500 flex align-center"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  className="inline-block h-4 w-4 mr-2 ml-2 bi bi-layers"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M8.235 1.559a.5.5 0 0 0-.47 0l-7.5 4a.5.5 0 0 0 0 .882L3.188 8 .264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l2.922-1.559a.5.5 0 0 0 0-.882l-7.5-4zm3.515 7.008L14.438 10 8 13.433 1.562 10 4.25 8.567l3.515 1.874a.5.5 0 0 0 .47 0l3.515-1.874zM8 9.433 1.562 6 8 2.567 14.438 6 8 9.433z"></path>
-                </svg>
+                <FancyGreetingCard />
                 <span>My Cards</span>
               </NuxtLink>
             </li>
@@ -116,17 +105,9 @@ export default function AppLayout({ children }) {
             <li className="relative">
               <NuxtLink
                 href="/greetings"
-                className="block py-2.5 px-6 hover:text-indigo-500 dark:hover:text-gray-300"
+                className="block py-2.5 px-6 hover:text-indigo-500 flex align-center"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  className="inline-block h-4 w-4 mr-2 ml-2 bi bi-card-list"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"></path>
-                  <path d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8zm0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-1-5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zM4 8a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm0 2.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z"></path>
-                </svg>
+                <Edit3 className="inline-block h-4 w-4 mr-2 ml-2 bi bi-card-list" />
                 <span>My Greetings</span>
               </NuxtLink>
             </li>
@@ -134,16 +115,9 @@ export default function AppLayout({ children }) {
             <li className="relative">
               <NuxtLink
                 href="/images"
-                className="block py-2.5 px-6 hover:text-indigo-500 dark:hover:text-gray-300"
+                className="block py-2.5 px-6 hover:text-indigo-500 flex align-center"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  className="inline-block h-4 w-4 mr-2 ml-2 bi bi-blockquote-right"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M2.5 3a.5.5 0 0 0 0 1h11a.5.5 0 0 0 0-1h-11zm0 3a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1h-6zm0 3a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1h-6zm0 3a.5.5 0 0 0 0 1h11a.5.5 0 0 0 0-1h-11zm10.113-5.373a6.59 6.59 0 0 0-.445-.275l.21-.352c.122.074.272.17.452.287.18.117.35.26.51.428.156.164.289.351.398.562.11.207.164.438.164.692 0 .36-.072.65-.216.873-.145.219-.385.328-.721.328-.215 0-.383-.07-.504-.211a.697.697 0 0 1-.188-.463c0-.23.07-.404.211-.521.137-.121.326-.182.569-.182h.281a1.686 1.686 0 0 0-.123-.498 1.379 1.379 0 0 0-.252-.37 1.94 1.94 0 0 0-.346-.298zm-2.168 0A6.59 6.59 0 0 0 10 6.352L10.21 6c.122.074.272.17.452.287.18.117.35.26.51.428.156.164.289.351.398.562.11.207.164.438.164.692 0 .36-.072.65-.216.873-.145.219-.385.328-.721.328-.215 0-.383-.07-.504-.211a.697.697 0 0 1-.188-.463c0-.23.07-.404.211-.521.137-.121.327-.182.569-.182h.281a1.749 1.749 0 0 0-.117-.492 1.402 1.402 0 0 0-.258-.375 1.94 1.94 0 0 0-.346-.3z"></path>
-                </svg>
+                <ImageIcon className="inline-block h-4 w-4 mr-2 ml-2 bi bi-card-list" />
                 <span>My Images</span>
               </NuxtLink>
             </li>
@@ -151,16 +125,9 @@ export default function AppLayout({ children }) {
             <li className="relative">
               <NuxtLink
                 href="/templates"
-                className="block py-2.5 px-6 hover:text-indigo-500 dark:hover:text-gray-300"
+                className="block py-2.5 px-6 hover:text-indigo-500 flex align-center"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  className="inline-block h-4 w-4 mr-2 ml-2 bi bi-blockquote-right"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M2.5 3a.5.5 0 0 0 0 1h11a.5.5 0 0 0 0-1h-11zm0 3a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1h-6zm0 3a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1h-6zm0 3a.5.5 0 0 0 0 1h11a.5.5 0 0 0 0-1h-11zm10.113-5.373a6.59 6.59 0 0 0-.445-.275l.21-.352c.122.074.272.17.452.287.18.117.35.26.51.428.156.164.289.351.398.562.11.207.164.438.164.692 0 .36-.072.65-.216.873-.145.219-.385.328-.721.328-.215 0-.383-.07-.504-.211a.697.697 0 0 1-.188-.463c0-.23.07-.404.211-.521.137-.121.326-.182.569-.182h.281a1.686 1.686 0 0 0-.123-.498 1.379 1.379 0 0 0-.252-.37 1.94 1.94 0 0 0-.346-.298zm-2.168 0A6.59 6.59 0 0 0 10 6.352L10.21 6c.122.074.272.17.452.287.18.117.35.26.51.428.156.164.289.351.398.562.11.207.164.438.164.692 0 .36-.072.65-.216.873-.145.219-.385.328-.721.328-.215 0-.383-.07-.504-.211a.697.697 0 0 1-.188-.463c0-.23.07-.404.211-.521.137-.121.327-.182.569-.182h.281a1.749 1.749 0 0 0-.117-.492 1.402 1.402 0 0 0-.258-.375 1.94 1.94 0 0 0-.346-.3z"></path>
-                </svg>
+                <LayoutTemplate className="inline-block h-4 w-4 mr-2 ml-2 bi bi-card-list" />
                 <span>Templates</span>
               </NuxtLink>
             </li>
@@ -190,10 +157,7 @@ export default function AppLayout({ children }) {
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
               <button>
-                <Avatar.Root
-                  className="AvatarRoot"
-                  onClick={() => setTooltipState(!tooltipState)}
-                >
+                <Avatar.Root className="AvatarRoot">
                   <Avatar.Image className="AvatarImage" src="" alt="MT" />
                   <Avatar.Fallback className="AvatarFallback" delayMs={600}>
                     MT
@@ -213,9 +177,10 @@ export default function AppLayout({ children }) {
                 <DropdownMenu.Item className="DropdownMenuItem">
                   <NuxtLink
                     href="/profile"
-                    className="block hover:text-indigo-500"
+                    className="block hover:text-indigo-500 flex align-center"
                   >
-                    <span>My Profile</span>
+                    <User className="inline-block h-4 w-4 mr-1" />
+                    <span className="p-1">My Profile</span>
                   </NuxtLink>
                 </DropdownMenu.Item>
                 <DropdownMenu.Item className="DropdownMenuItem">
@@ -223,7 +188,9 @@ export default function AppLayout({ children }) {
                     href="/cards"
                     className="block hover:text-indigo-500"
                   >
-                    <span>Logout</span>
+
+                    <LogOut className="inline-block h-4 w-4 mr-1" />
+                    <span className="p-1">Logout</span>
                   </NuxtLink>
                 </DropdownMenu.Item>
               </DropdownMenu.Content>
