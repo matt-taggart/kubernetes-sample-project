@@ -1,5 +1,6 @@
 import Head from "next/head";
 import NuxtLink from "next/link";
+import clsx from "clsx";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import * as Avatar from "@radix-ui/react-avatar";
 import {
@@ -8,12 +9,15 @@ import {
   Edit3,
   LayoutTemplate,
   User,
-  LogOut
+  LogOut,
 } from "lucide-react";
 import { GreetingCardSVG } from "./GreetingCardSVG";
 import { FancyGreetingCard } from "./FancyGreetingCard";
+import { useRouter } from "next/router";
 
 export default function AppLayout({ children }) {
+  const { pathname } = useRouter();
+  console.log("%cpathname", "color:cyan; ", pathname);
   return (
     <>
       <Head>
@@ -78,7 +82,12 @@ export default function AppLayout({ children }) {
             <li className="relative">
               <NuxtLink
                 href="/"
-                className="block py-2.5 px-6 hover:text-indigo-500 text-indigo-500 flex align-center"
+                className={clsx(
+                  "block py-2.5 px-6 hover:text-indigo-500 flex align-center",
+                  {
+                    "text-indigo-500": pathname === "/",
+                  }
+                )}
               >
                 <Plus className="inline-block h-4 w-4 mr-2 ml-2 bi bi-card-list" />
                 <span>Create New</span>
@@ -95,7 +104,12 @@ export default function AppLayout({ children }) {
             <li className="relative">
               <NuxtLink
                 href="/cards"
-                className="block py-2.5 px-6 hover:text-indigo-500 flex align-center"
+                className={clsx(
+                  "block py-2.5 px-6 hover:text-indigo-500 flex align-center",
+                  {
+                    "text-indigo-500": pathname === "/cards",
+                  }
+                )}
               >
                 <FancyGreetingCard />
                 <span>My Cards</span>
@@ -105,7 +119,12 @@ export default function AppLayout({ children }) {
             <li className="relative">
               <NuxtLink
                 href="/greetings"
-                className="block py-2.5 px-6 hover:text-indigo-500 flex align-center"
+                className={clsx(
+                  "block py-2.5 px-6 hover:text-indigo-500 flex align-center",
+                  {
+                    "text-indigo-500": pathname === "/greetings",
+                  }
+                )}
               >
                 <Edit3 className="inline-block h-4 w-4 mr-2 ml-2 bi bi-card-list" />
                 <span>My Greetings</span>
@@ -115,7 +134,12 @@ export default function AppLayout({ children }) {
             <li className="relative">
               <NuxtLink
                 href="/images"
-                className="block py-2.5 px-6 hover:text-indigo-500 flex align-center"
+                className={clsx(
+                  "block py-2.5 px-6 hover:text-indigo-500 flex align-center",
+                  {
+                    "text-indigo-500": pathname === "/images",
+                  }
+                )}
               >
                 <ImageIcon className="inline-block h-4 w-4 mr-2 ml-2 bi bi-card-list" />
                 <span>My Images</span>
@@ -125,7 +149,12 @@ export default function AppLayout({ children }) {
             <li className="relative">
               <NuxtLink
                 href="/templates"
-                className="block py-2.5 px-6 hover:text-indigo-500 flex align-center"
+                className={clsx(
+                  "block py-2.5 px-6 hover:text-indigo-500 flex align-center",
+                  {
+                    "text-indigo-500": pathname === "/templates",
+                  }
+                )}
               >
                 <LayoutTemplate className="inline-block h-4 w-4 mr-2 ml-2 bi bi-card-list" />
                 <span>Templates</span>
@@ -188,7 +217,6 @@ export default function AppLayout({ children }) {
                     href="/cards"
                     className="block hover:text-indigo-500"
                   >
-
                     <LogOut className="inline-block h-4 w-4 mr-1" />
                     <span className="p-1">Logout</span>
                   </NuxtLink>
