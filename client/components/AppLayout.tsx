@@ -1,5 +1,6 @@
 import Head from "next/head";
 import NuxtLink from "next/link";
+import { useRouter } from "next/router";
 import clsx from "clsx";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import * as Avatar from "@radix-ui/react-avatar";
@@ -13,11 +14,9 @@ import {
 } from "lucide-react";
 import { GreetingCardSVG } from "./GreetingCardSVG";
 import { FancyGreetingCard } from "./FancyGreetingCard";
-import { useRouter } from "next/router";
 
 export default function AppLayout({ children }) {
   const { pathname } = useRouter();
-  console.log("%cpathname", "color:cyan; ", pathname);
   return (
     <>
       <Head>
