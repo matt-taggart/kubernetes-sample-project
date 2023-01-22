@@ -1,43 +1,13 @@
 import Head from "next/head";
 import NuxtLink from "next/link";
+import { useState } from "react";
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
+import * as Avatar from "@radix-ui/react-avatar";
+import { GreetingCardSVG } from "./GreetingCardSVG";
 
 export default function AppLayout({ children }) {
-  const items = [
-    {
-      label: <NuxtLink href="/">Create Card</NuxtLink>,
-      key: "1",
-    },
-    {
-      label: <NuxtLink href="/add-greeting">Add Greeting</NuxtLink>,
-      key: "2",
-    },
-    {
-      label: <NuxtLink href="/cards">My Cards</NuxtLink>,
-      key: "3",
-    },
-    {
-      label: <NuxtLink href="/images">Saved Images</NuxtLink>,
-      key: "4",
-    },
-    {
-      label: <NuxtLink href="/greetings">Saved Greetings</NuxtLink>,
-      key: "5",
-    },
-  ];
-  const dropdownItems = [
-    {
-      key: "1",
-      label: <NuxtLink href="/profile">Profile</NuxtLink>,
-    },
-    {
-      key: "2",
-      label: <NuxtLink href="/billing">Billing</NuxtLink>,
-    },
-    {
-      key: "3",
-      label: <NuxtLink href="/login">Logout</NuxtLink>,
-    },
-  ];
+  const [tooltipState, setTooltipState] = useState(false);
+  console.log("%ctooltipState", "color:cyan; ", tooltipState);
   return (
     <>
       <Head>
@@ -46,24 +16,222 @@ export default function AppLayout({ children }) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div
-        style={{
-          display: "flex",
-          padding: "0 2rem",
-          justifyContent: "space-between",
-          alignItems: "center",
-          background: "#fff",
-          height: "50px",
-          position: "sticky",
-          top: 0,
-          zIndex: 1,
-          width: "100%",
-          borderBottom: "1px solid rgba(5, 5, 5, 0.06)",
-        }}
-      >
-        Card Couture
-      </div>
-      <main>{children}</main>
+
+      <nav className="fixed h-screen bg-white shadow-sm w-64">
+        <div className="h-full overflow-y-auto scrollbars">
+          <div className="mh-18 text-center py-5">
+            <a href="#" className="relative">
+              <h2 className="flex text-2xl font-semibold text-gray-200 px-4 max-h-9">
+                <GreetingCardSVG />
+                <span className="text-gray-700 dark:text-gray-200">
+                  Card Couture
+                </span>
+              </h2>
+              <h2 className="text-3xl font-semibold mx-auto logo-compact hidden">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="inline-block w-7 h-7 -mt-1"
+                  viewBox="0 0 300.000000 300.000000"
+                >
+                  <g
+                    transform="translate(0.000000,300.000000) scale(0.100000,-0.100000)"
+                    fill="currentColor"
+                    stroke="none"
+                  >
+                    <path
+                      className="text-pink-500"
+                      d="M1225 2825 c-546 -115 -959 -534 -1065 -1080 -28 -147 -28 -373 0
+                  -520 81 -419 350 -774 728 -964 115 -58 120 -58 65 3 -27 29 -65 84 -85 122
+                  -68 131 -90 236 -89 428 0 229 44 470 167 923 41 149 74 275 74 278 0 4 -102
+                  5 -227 3 -198 -4 -236 -7 -290 -25 -35 -12 -63 -18 -63 -14 0 4 22 43 49 87
+                  58 93 123 157 177 175 22 6 124 14 234 16 l195 5 33 112 c91 305 200 431 405
+                  465 43 7 31 9 -73 9 -94 1 -152 -5 -235 -23z"
+                    ></path>
+                    <path
+                      className="text-indigo-500"
+                      d="M1695 2763 c-48 -77 -122 -231 -179 -375 -25 -65 -46 -120 -46 -123
+                  0 -7 995 -6 1069 1 34 4 61 12 61 18 0 6 -30 46 -65 88 -170 201 -426 361
+                  -687 428 -110 29 -111 28 -153 -37z"
+                    ></path>
+                    <path
+                      className="text-indigo-500"
+                      d="M2660 2104 c-33 -36 -54 -47 -120 -67 -21 -6 -256 -12 -595 -16
+                  l-560 -6 -51 -180 c-62 -215 -116 -445 -144 -608 -74 -435 -37 -655 124 -740
+                  62 -32 189 -30 274 5 174 72 337 212 410 353 l20 40 24 -50 c32 -70 32 -162
+                  -1 -229 -48 -97 -216 -250 -383 -347 -86 -51 -170 -85 -261 -109 l-69 -17 94
+                  -6 c469 -33 947 205 1214 605 229 342 291 790 163 1173 -24 70 -76 192 -94
+                  217 -10 16 -14 14 -45 -18z"
+                    ></path>
+                  </g>
+                </svg>
+              </h2>
+            </a>
+          </div>
+
+          <ul className="w-full flex flex-col font-medium pl-1.5 pr-1.5">
+            <li className="relative">
+              <NuxtLink
+                href="/"
+                className="block py-2.5 px-6 hover:text-indigo-500 dark:hover:text-gray-300 text-indigo-500 dark:text-gray-300"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  className="inline-block h-4 w-4 mr-2 ml-2 bi bi-layout-sidebar-inset"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M14 2a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V3a1 1 0 0 1 1-1h12zM2 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H2z"></path>
+                  <path d="M3 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V4z"></path>
+                </svg>
+                <span>Create New</span>
+              </NuxtLink>
+            </li>
+
+            <div className="py-2">
+              <div
+                className="bg-gray-300"
+                style={{ margin: "0 1.5rem", height: "1px" }}
+              ></div>
+            </div>
+
+            <li className="relative">
+              <NuxtLink
+                href="/cards"
+                className="block py-2.5 px-6 hover:text-indigo-500 dark:hover:text-gray-300"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  className="inline-block h-4 w-4 mr-2 ml-2 bi bi-layers"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M8.235 1.559a.5.5 0 0 0-.47 0l-7.5 4a.5.5 0 0 0 0 .882L3.188 8 .264 9.559a.5.5 0 0 0 0 .882l7.5 4a.5.5 0 0 0 .47 0l7.5-4a.5.5 0 0 0 0-.882L12.813 8l2.922-1.559a.5.5 0 0 0 0-.882l-7.5-4zm3.515 7.008L14.438 10 8 13.433 1.562 10 4.25 8.567l3.515 1.874a.5.5 0 0 0 .47 0l3.515-1.874zM8 9.433 1.562 6 8 2.567 14.438 6 8 9.433z"></path>
+                </svg>
+                <span>My Cards</span>
+              </NuxtLink>
+            </li>
+
+            <li className="relative">
+              <NuxtLink
+                href="/greetings"
+                className="block py-2.5 px-6 hover:text-indigo-500 dark:hover:text-gray-300"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  className="inline-block h-4 w-4 mr-2 ml-2 bi bi-card-list"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M14.5 3a.5.5 0 0 1 .5.5v9a.5.5 0 0 1-.5.5h-13a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h13zm-13-1A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2h-13z"></path>
+                  <path d="M5 8a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7A.5.5 0 0 1 5 8zm0-2.5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm0 5a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5zm-1-5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zM4 8a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0zm0 2.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0z"></path>
+                </svg>
+                <span>My Greetings</span>
+              </NuxtLink>
+            </li>
+
+            <li className="relative">
+              <NuxtLink
+                href="/images"
+                className="block py-2.5 px-6 hover:text-indigo-500 dark:hover:text-gray-300"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  className="inline-block h-4 w-4 mr-2 ml-2 bi bi-blockquote-right"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M2.5 3a.5.5 0 0 0 0 1h11a.5.5 0 0 0 0-1h-11zm0 3a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1h-6zm0 3a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1h-6zm0 3a.5.5 0 0 0 0 1h11a.5.5 0 0 0 0-1h-11zm10.113-5.373a6.59 6.59 0 0 0-.445-.275l.21-.352c.122.074.272.17.452.287.18.117.35.26.51.428.156.164.289.351.398.562.11.207.164.438.164.692 0 .36-.072.65-.216.873-.145.219-.385.328-.721.328-.215 0-.383-.07-.504-.211a.697.697 0 0 1-.188-.463c0-.23.07-.404.211-.521.137-.121.326-.182.569-.182h.281a1.686 1.686 0 0 0-.123-.498 1.379 1.379 0 0 0-.252-.37 1.94 1.94 0 0 0-.346-.298zm-2.168 0A6.59 6.59 0 0 0 10 6.352L10.21 6c.122.074.272.17.452.287.18.117.35.26.51.428.156.164.289.351.398.562.11.207.164.438.164.692 0 .36-.072.65-.216.873-.145.219-.385.328-.721.328-.215 0-.383-.07-.504-.211a.697.697 0 0 1-.188-.463c0-.23.07-.404.211-.521.137-.121.327-.182.569-.182h.281a1.749 1.749 0 0 0-.117-.492 1.402 1.402 0 0 0-.258-.375 1.94 1.94 0 0 0-.346-.3z"></path>
+                </svg>
+                <span>My Images</span>
+              </NuxtLink>
+            </li>
+
+            <li className="relative">
+              <NuxtLink
+                href="/templates"
+                className="block py-2.5 px-6 hover:text-indigo-500 dark:hover:text-gray-300"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="currentColor"
+                  className="inline-block h-4 w-4 mr-2 ml-2 bi bi-blockquote-right"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M2.5 3a.5.5 0 0 0 0 1h11a.5.5 0 0 0 0-1h-11zm0 3a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1h-6zm0 3a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1h-6zm0 3a.5.5 0 0 0 0 1h11a.5.5 0 0 0 0-1h-11zm10.113-5.373a6.59 6.59 0 0 0-.445-.275l.21-.352c.122.074.272.17.452.287.18.117.35.26.51.428.156.164.289.351.398.562.11.207.164.438.164.692 0 .36-.072.65-.216.873-.145.219-.385.328-.721.328-.215 0-.383-.07-.504-.211a.697.697 0 0 1-.188-.463c0-.23.07-.404.211-.521.137-.121.326-.182.569-.182h.281a1.686 1.686 0 0 0-.123-.498 1.379 1.379 0 0 0-.252-.37 1.94 1.94 0 0 0-.346-.298zm-2.168 0A6.59 6.59 0 0 0 10 6.352L10.21 6c.122.074.272.17.452.287.18.117.35.26.51.428.156.164.289.351.398.562.11.207.164.438.164.692 0 .36-.072.65-.216.873-.145.219-.385.328-.721.328-.215 0-.383-.07-.504-.211a.697.697 0 0 1-.188-.463c0-.23.07-.404.211-.521.137-.121.327-.182.569-.182h.281a1.749 1.749 0 0 0-.117-.492 1.402 1.402 0 0 0-.258-.375 1.94 1.94 0 0 0-.346-.3z"></path>
+                </svg>
+                <span>Templates</span>
+              </NuxtLink>
+            </li>
+          </ul>
+
+          <div className="px-4 box-banner">
+            <div className="my-8 p-4 text-center bg-gray-300 dark:bg-gray-700 bg-opacity-50 rounded-lg">
+              <h4 className="font-bold inline-block mb-2">Model Status</h4>
+              <div className="mb-3 text-sm">Your model is ready to view!</div>
+
+              <div className="grid">
+                <a
+                  href="#"
+                  className="py-2 px-4 inline-block text-center mb-3 rounded leading-5 text-gray-100 bg-pink-500 border border-pink-500 hover:text-white hover:bg-pink-600 hover:ring-0 hover:border-pink-600 focus:bg-pink-600 focus:border-pink-600 focus:outline-none focus:ring-0"
+                  target="_blank"
+                >
+                  View
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      <main className="bg-gray-100 h-screen" style={{ marginLeft: "16rem" }}>
+        <nav className="z-50 sticky flex flex-row flex-nowrap items-center justify-end mt-0 py-2 left-0 md:left-64 right-0 right-0 md:right-64 left-0 px-6 bg-white shadow-sm">
+          <DropdownMenu.Root>
+            <DropdownMenu.Trigger>
+              <button>
+                <Avatar.Root
+                  className="AvatarRoot"
+                  onClick={() => setTooltipState(!tooltipState)}
+                >
+                  <Avatar.Image className="AvatarImage" src="" alt="MT" />
+                  <Avatar.Fallback className="AvatarFallback" delayMs={600}>
+                    MT
+                  </Avatar.Fallback>
+                </Avatar.Root>
+              </button>
+            </DropdownMenu.Trigger>
+            <DropdownMenu.Portal>
+              <DropdownMenu.Content
+                className="DropdownMenuContent"
+                sideOffset={5}
+              >
+                <DropdownMenu.Item className="DropdownMenuItem">
+                  Matt Taggart
+                </DropdownMenu.Item>
+                <DropdownMenu.Separator className="DropdownMenuSeparator" />
+                <DropdownMenu.Item className="DropdownMenuItem">
+                  <NuxtLink
+                    href="/profile"
+                    className="block hover:text-indigo-500"
+                  >
+                    <span>My Profile</span>
+                  </NuxtLink>
+                </DropdownMenu.Item>
+                <DropdownMenu.Item className="DropdownMenuItem">
+                  <NuxtLink
+                    href="/cards"
+                    className="block hover:text-indigo-500"
+                  >
+                    <span>Logout</span>
+                  </NuxtLink>
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Portal>
+          </DropdownMenu.Root>{" "}
+        </nav>
+        <div className="p-4">{children}</div>
+      </main>
     </>
   );
 }
