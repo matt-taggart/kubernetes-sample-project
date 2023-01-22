@@ -180,7 +180,7 @@ export default function AppLayout({ children }) {
         </div>
       </nav>
 
-      <main className="bg-gray-100 h-screen" style={{ marginLeft: "16rem" }}>
+      <main className="bg-gray-100 min-h-screen" style={{ marginLeft: "16rem" }}>
         <nav className="z-50 sticky flex flex-row flex-nowrap items-center justify-end mt-0 py-2 left-0 md:left-64 right-0 right-0 md:right-64 left-0 px-6 bg-white shadow-sm">
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
@@ -224,7 +224,7 @@ export default function AppLayout({ children }) {
             </DropdownMenu.Portal>
           </DropdownMenu.Root>{" "}
         </nav>
-        <div className="p-4">{children}</div>
+        <div className="p-4 min-h-screen">{children}</div>
       </main>
     </>
   );
