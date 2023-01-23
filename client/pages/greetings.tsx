@@ -8,11 +8,11 @@ import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import AppLayout from "../components/AppLayout";
 import { checkAuthRoute } from "../middleware/checkAuthRoute";
 
-const wait = () => new Promise((resolve) => setTimeout(resolve, 1000));
-
 export default function Greetings({ accessToken }) {
   const [loading, setLoading] = useState(false);
+  const [deleteLoading, setDeleteLoading] = useState(false);
   const [greetings, setGreetings] = useState([]);
+  const [greetingIdToDelete, setGreetingIdToDelete] = useState(null);
   const [open, setOpen] = useState(false);
 
   const {
@@ -57,6 +57,27 @@ export default function Greetings({ accessToken }) {
       reset();
     } catch (error) {
       setLoading(false);
+    }
+  }
+
+  async function deleteGreeting(id) {
+    try {
+      setDeleteLoading(true);
+      await axios({
+        url: `v1/greetings/${id}`,
+        method: "delete",
+        withCredentials: true,
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      setGreetingIdToDelete(null);
+      setDeleteLoading(false);
+      setOpen(false);
+      await fetchGreetings();
+    } catch (error) {
+      setDeleteLoading(false);
     }
   }
 
@@ -160,11 +181,16 @@ export default function Greetings({ accessToken }) {
                 <li className="group" key={greeting.id}>
                   <div className="border border-gray-200 border-b-0 list-none rounded-sm py-3 px-4 flex justify-between items-center">
                     <div className="flex flex-col">
-                      <AlertDialog.Trigger asChild>
+                      <AlertDialog.Trigger
+                        style={{
+                          position: "absolute",
+                          alignSelf: "flex-end",
+                        }}
+                      >
                         <button
-                          style={{
-                            position: "absolute",
-                            alignSelf: "flex-end",
+                          onClick={() => {
+                            setOpen(true);
+                            setGreetingIdToDelete(greeting.id);
                           }}
                         >
                           <Trash2 size={18} />
@@ -211,11 +237,40 @@ export default function Greetings({ accessToken }) {
                 Cancel
               </button>
               <button
-                type="button"
-                className="text-sm py-2 px-4 inline-block text-center mb-3 rounded leading-5 text-gray-100 bg-red-500 border border-red-500 hover:text-white hover:bg-red-600 hover:ring-0 hover:border-red-600 focus:bg-red-600 focus:border-red-600 focus:outline-none focus:ring-0"
-                onClick={() => wait().then(() => setOpen(false))}
+                className={clsx(
+                  "text-sm py-2 px-4 inline-block text-center mb-3 rounded leading-5 text-gray-100 bg-red-500 border border-red-500 hover:text-white hover:bg-red-600 hover:ring-0 hover:border-red-600 focus:bg-red-600 focus:border-red-600 focus:outline-none focus:ring-0",
+                  { disabled: deleteLoading }
+                )}
+                onClick={() => deleteGreeting(greetingIdToDelete)}
               >
-                Yes, delete greeting
+                <div className="flex">
+                  <div className="mr-2">
+                    {deleteLoading && (
+                      <svg
+                        className="animate-spin h-5 w-5 text-white-700"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          stroke-width="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
+                    )}
+                  </div>
+
+                  <div>Yes, delete greeting</div>
+                </div>
               </button>
             </div>
           </AlertDialog.Content>

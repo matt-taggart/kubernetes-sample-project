@@ -46,3 +46,22 @@ getGreetingsWorker.on("failed", (job, err) => {
   console.log(`${job.id} has failed with ${err.message}`);
   return err;
 });
+
+const deleteGreetingsWorker = new Worker(
+  "deleteGreetings",
+  async (job) => {
+    try {
+      return await GreetingModel.deleteOne({
+        _id: mongoose.Types.ObjectId(job.data.id),
+      });
+    } catch (error) {
+      throw error;
+    }
+  },
+  REDIS_CONNECTION
+);
+
+deleteGreetingsWorker.on("failed", (job, err) => {
+  console.log(`${job.id} has failed with ${err.message}`);
+  return err;
+});

@@ -23,6 +23,7 @@ const getCustomerQueue = new Queue("getCustomer", REDIS_CONNECTION);
 const updateCustomerQueue = new Queue("updateCustomer", REDIS_CONNECTION);
 const addGreetingQueue = new Queue("addGreeting", REDIS_CONNECTION);
 const getGreetingsQueue = new Queue("getGreetings", REDIS_CONNECTION);
+const deleteGreetingsQueue = new Queue("deleteGreetings", REDIS_CONNECTION);
 
 app.use(bodyParser());
 app.use(cors());
@@ -159,6 +160,34 @@ router.post("/greetings", verifyJwt, async (ctx) => {
 
     ctx.body = { customer, greeting };
   } catch (error) {
+    ctx.throw(400);
+  }
+});
+
+router.delete("/greetings/:id", verifyJwt, async (ctx) => {
+  try {
+    const deleteGreetingJob = await deleteGreetingsQueue.add("deleteGreeting", {
+      id: ctx.request.params.id,
+    });
+    const deletedGreeting = await deleteGreetingJob.waitUntilFinished(
+      new QueueEvents("deleteGreetings", REDIS_CONNECTION)
+    );
+    console.log("%cdeletedGreeting", "color:cyan; ", deletedGreeting);
+
+    // const updateCustomerJob = await updateCustomerQueue.add(
+    //   "removeCustomerGreeting",
+    //   {
+    //     userId: ctx.state.userId,
+    //     greetingId: ctx.request.params.id,
+    //   }
+    // );
+    // await updateCustomerJob.waitUntilFinished(
+    //   new QueueEvents("updateCustomer", REDIS_CONNECTION)
+    // );
+
+    ctx.status = 204;
+  } catch (error) {
+    console.log("%cerror", "color:cyan; ", error);
     ctx.throw(400);
   }
 });
