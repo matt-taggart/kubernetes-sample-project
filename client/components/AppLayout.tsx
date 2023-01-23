@@ -2,6 +2,7 @@ import Head from "next/head";
 import NuxtLink from "next/link";
 import { useRouter } from "next/router";
 import clsx from "clsx";
+import axios from "axios";
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import * as Avatar from "@radix-ui/react-avatar";
 import {
@@ -16,7 +17,20 @@ import { GreetingCardSVG } from "./GreetingCardSVG";
 import { FancyGreetingCard } from "./FancyGreetingCard";
 
 export default function AppLayout({ children }) {
-  const { pathname } = useRouter();
+  const router = useRouter();
+
+  async function logout() {
+    try {
+      await axios({
+        url: `v1/logout`,
+        method: "delete",
+        withCredentials: true,
+      });
+      router.push("/login");
+    } catch (error) {
+      throw error;
+    }
+  }
   return (
     <>
       <Head>
@@ -84,7 +98,7 @@ export default function AppLayout({ children }) {
                 className={clsx(
                   "block py-2.5 px-6 hover:text-indigo-500 flex align-center",
                   {
-                    "text-indigo-500": pathname === "/",
+                    "text-indigo-500": router.pathname === "/",
                   }
                 )}
               >
@@ -106,7 +120,7 @@ export default function AppLayout({ children }) {
                 className={clsx(
                   "block py-2.5 px-6 hover:text-indigo-500 flex align-center",
                   {
-                    "text-indigo-500": pathname === "/cards",
+                    "text-indigo-500": router.pathname === "/cards",
                   }
                 )}
               >
@@ -121,7 +135,7 @@ export default function AppLayout({ children }) {
                 className={clsx(
                   "block py-2.5 px-6 hover:text-indigo-500 flex align-center",
                   {
-                    "text-indigo-500": pathname === "/greetings",
+                    "text-indigo-500": router.pathname === "/greetings",
                   }
                 )}
               >
@@ -136,7 +150,7 @@ export default function AppLayout({ children }) {
                 className={clsx(
                   "block py-2.5 px-6 hover:text-indigo-500 flex align-center",
                   {
-                    "text-indigo-500": pathname === "/images",
+                    "text-indigo-500": router.pathname === "/images",
                   }
                 )}
               >
@@ -151,7 +165,7 @@ export default function AppLayout({ children }) {
                 className={clsx(
                   "block py-2.5 px-6 hover:text-indigo-500 flex align-center",
                   {
-                    "text-indigo-500": pathname === "/templates",
+                    "text-indigo-500": router.pathname === "/templates",
                   }
                 )}
               >
@@ -180,7 +194,10 @@ export default function AppLayout({ children }) {
         </div>
       </nav>
 
-      <main className="bg-gray-100 min-h-screen" style={{ marginLeft: "16rem" }}>
+      <main
+        className="bg-gray-100 min-h-screen"
+        style={{ marginLeft: "16rem" }}
+      >
         <nav className="z-50 sticky flex flex-row flex-nowrap items-center justify-end mt-0 py-2 left-0 md:left-64 right-0 right-0 md:right-64 left-0 px-6 bg-white shadow-sm">
           <DropdownMenu.Root>
             <DropdownMenu.Trigger>
@@ -212,13 +229,10 @@ export default function AppLayout({ children }) {
                   </NuxtLink>
                 </DropdownMenu.Item>
                 <DropdownMenu.Item className="DropdownMenuItem">
-                  <NuxtLink
-                    href="/cards"
-                    className="block hover:text-indigo-500"
-                  >
+                  <button onClick={logout} className="block hover:text-indigo-500">
                     <LogOut className="inline-block h-4 w-4 mr-1" />
                     <span className="p-1">Logout</span>
-                  </NuxtLink>
+                  </button>
                 </DropdownMenu.Item>
               </DropdownMenu.Content>
             </DropdownMenu.Portal>

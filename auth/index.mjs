@@ -162,3 +162,23 @@ refreshTokenWorker.on("failed", (job, err) => {
   console.log(`${job.id} has failed with ${err.message}`);
   return err;
 });
+
+const logoutWorker = new Worker(
+  "logout",
+  async (job) => {
+    try {
+      return await CustomerModel.findOneAndUpdate(
+        { _id: mongoose.Types.ObjectId(job.data.userId) },
+        { accessToken: undefined, refreshToken: undefined }
+      );
+    } catch (error) {
+      throw error;
+    }
+  },
+  REDIS_CONNECTION
+);
+
+logoutWorker.on("failed", (job, err) => {
+  console.log(`${job.id} has failed with ${err.message}`);
+  return err;
+});

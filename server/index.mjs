@@ -18,6 +18,7 @@ const { PORT = 8080 } = process.env;
 
 const registrationQueue = new Queue("registration", REDIS_CONNECTION);
 const loginQueue = new Queue("login", REDIS_CONNECTION);
+const logoutQueue = new Queue("logout", REDIS_CONNECTION);
 const refreshTokenQueue = new Queue("refreshToken", REDIS_CONNECTION);
 const getCustomerQueue = new Queue("getCustomer", REDIS_CONNECTION);
 const updateCustomerQueue = new Queue("updateCustomer", REDIS_CONNECTION);
@@ -74,6 +75,26 @@ router.post("/login", async (ctx) => {
       sameSite: "strict",
       maxAge: 24 * 60 * 60 * 1000,
     });
+  } catch (error) {
+    ctx.throw(401, "Username or password is incorrect");
+  }
+});
+
+router.delete("/logout", async (ctx) => {
+  try {
+    const refreshToken = ctx.cookies.get("cc_auth");
+    if (!refreshToken) {
+      ctx.status = 204;
+      return;
+    }
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    const job = await logoutQueue.add("logoutUser", {
+      userId: decoded.id,
+    });
+    await job.waitUntilFinished(new QueueEvents("logout", REDIS_CONNECTION));
+
+    ctx.cookies.set("cc_auth");
+    ctx.status = 204;
   } catch (error) {
     ctx.throw(401, "Username or password is incorrect");
   }
