@@ -169,25 +169,12 @@ router.delete("/greetings/:id", verifyJwt, async (ctx) => {
     const deleteGreetingJob = await deleteGreetingsQueue.add("deleteGreeting", {
       id: ctx.request.params.id,
     });
-    const deletedGreeting = await deleteGreetingJob.waitUntilFinished(
+    await deleteGreetingJob.waitUntilFinished(
       new QueueEvents("deleteGreetings", REDIS_CONNECTION)
     );
-    console.log("%cdeletedGreeting", "color:cyan; ", deletedGreeting);
-
-    // const updateCustomerJob = await updateCustomerQueue.add(
-    //   "removeCustomerGreeting",
-    //   {
-    //     userId: ctx.state.userId,
-    //     greetingId: ctx.request.params.id,
-    //   }
-    // );
-    // await updateCustomerJob.waitUntilFinished(
-    //   new QueueEvents("updateCustomer", REDIS_CONNECTION)
-    // );
 
     ctx.status = 204;
   } catch (error) {
-    console.log("%cerror", "color:cyan; ", error);
     ctx.throw(400);
   }
 });
