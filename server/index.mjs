@@ -120,9 +120,13 @@ router.get("/greetings", verifyJwt, async (ctx) => {
     const getGreetingsJob = await getGreetingsQueue.add("get", {
       userId: ctx.state.userId,
     });
-    const greetings = await getGreetingsJob.waitUntilFinished(
+    const greetingsResponse = await getGreetingsJob.waitUntilFinished(
       new QueueEvents("getGreetings", REDIS_CONNECTION)
     );
+    const greetings = greetingsResponse.map(({ _id, __v, ...rest }) => ({
+      id: _id,
+      ...rest,
+    }));
 
     ctx.body = { greetings };
   } catch (error) {
@@ -130,11 +134,12 @@ router.get("/greetings", verifyJwt, async (ctx) => {
   }
 });
 
-router.post("/greeting", verifyJwt, async (ctx) => {
+router.post("/greetings", verifyJwt, async (ctx) => {
   try {
     const addGreetingJob = await addGreetingQueue.add("add", {
       prompt: ctx.request.body.prompt,
-      generatedText: "This is some sample generated text",
+      generatedText:
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
       userId: ctx.state.userId,
     });
     const greeting = await addGreetingJob.waitUntilFinished(
