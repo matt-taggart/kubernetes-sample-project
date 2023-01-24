@@ -8,9 +8,11 @@ const createCustomerQueue = new Queue("createCustomer", REDIS_CONNECTION);
 
 const init = async () => {
   await mongoose.connect(process.env.MONGODB_URL);
+  console.log("%cprocess", "color:cyan; ", process.env.MONGODB_URL);
 };
 
 init().catch((_) => {
+  console.log("%c_", "color:cyan; ", _);
   process.exit(0);
 });
 

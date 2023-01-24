@@ -64,3 +64,4 @@ docker_build(
 )
 
 k8s_yaml(kustomize('./kustomize/environments/development', flags = ["--enable-alpha-plugins"]))
+secret_settings(disable_scrub = True)

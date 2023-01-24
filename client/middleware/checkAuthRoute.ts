@@ -38,7 +38,6 @@ export const checkAuthRoute = async (context) => {
         },
       };
     } catch (error) {
-      console.log("%cerror", "color:cyan; ", error);
       return {
         redirect: {
           permanent: false,
@@ -47,7 +46,6 @@ export const checkAuthRoute = async (context) => {
       };
     }
   } catch (error) {
-    console.log("%cerror", "color:cyan; ", error);
     return {
       redirect: {
         permanent: false,

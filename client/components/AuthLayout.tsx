@@ -22,3 +22,17 @@ export default function AuthLayout({ children }) {
     </>
   );
 }
+
+export async function getServerSideProps(context) {
+  const authCookie = context.req.cookies
+    ? { Cookie: `cc_auth=${context.req.cookies["cc_auth"]};` }
+    : {};
+  if (!authCookie) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: "/",
+      },
+    };
+  }
+}

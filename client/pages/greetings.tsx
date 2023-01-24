@@ -130,7 +130,10 @@ export default function Greetings({ accessToken }) {
                     </div>
                   </div>
 
-                  <div className="flex-shrink max-w-full px-4 w-full">
+                  <div
+                    className="flex align-center flex-shrink max-w-full px-4 w-full"
+                    style={{ gap: "2rem" }}
+                  >
                     <button
                       type="submit"
                       className={clsx(
@@ -164,58 +167,77 @@ export default function Greetings({ accessToken }) {
                           )}
                         </div>
 
-                        <div>Submit Greeting</div>
+                        <div>
+                          {loading ? "Creating Greeting..." : "Submit Greeting"}
+                        </div>
                       </div>
                     </button>
+                    {loading && (
+                      <small>
+                        Hang tight! This process can take up to 30 seconds.
+                      </small>
+                    )}
                   </div>
                 </form>
               </div>
             </div>
           </div>
         </div>
-
-        <div className="flex-shrink max-w-full px-4 w-full mb-6">
-          <div className="p-6 bg-white rounded-lg shadow-lg h-full">
-            <ul className="px-0 border-b border-gray-200 dark:border-gray-700">
-              {greetings.map((greeting) => (
-                <li className="group" key={greeting.id}>
-                  <div className="border border-gray-200 border-b-0 list-none rounded-sm py-3 px-4 flex justify-between items-center">
-                    <div className="flex flex-col">
-                      <AlertDialog.Trigger
-                        style={{
-                          position: "absolute",
-                          alignSelf: "flex-end",
-                        }}
-                      >
-                        <button
-                          onClick={() => {
-                            setOpen(true);
-                            setGreetingIdToDelete(greeting.id);
-                          }}
-                        >
-                          <Trash2 size={18} />
-                        </button>
-                      </AlertDialog.Trigger>
-                      <p>{greeting.prompt}</p>
-                      <p className="mt-2">
-                        <small>{greeting.generatedText}</small>
-                      </p>
-                      <div
-                        style={{ alignSelf: "flex-end" }}
-                        className="text-xs text-gray-500 self-center mr-3 ml-3 mt-2"
-                      >
-                        {format(
-                          parseISO(greeting.createdAt),
-                          "MMM d, y hh:mm aaa"
-                        )}
+        {greetings.length ? (
+          <div className="flex-shrink max-w-full px-4 w-full mb-6">
+            <div className="p-6 bg-white rounded-lg shadow-lg h-full">
+              <ul className="px-0 border-b border-gray-200 dark:border-gray-700">
+                {greetings.map((greeting) => {
+                  const values = greeting.generatedText
+                    .split(/\n/)
+                    .filter(Boolean);
+                  console.log("%cvalues", "color:cyan; ", values);
+                  return (
+                    <li className="group" key={greeting.id}>
+                      <div className="border border-gray-200 border-b-0 list-none rounded-sm py-3 px-4 flex justify-between items-center">
+                        <div className="flex flex-col w-full">
+                          <AlertDialog.Trigger
+                            style={{
+                              position: "absolute",
+                              alignSelf: "flex-end",
+                            }}
+                          >
+                            <button
+                              onClick={() => {
+                                setOpen(true);
+                                setGreetingIdToDelete(greeting.id);
+                              }}
+                            >
+                              <Trash2 size={18} />
+                            </button>
+                          </AlertDialog.Trigger>
+                          <p>{greeting.prompt}</p>
+                          {values.map((generatedText) => {
+                            return (
+                              <p className="mt-2">
+                                <small>{generatedText}</small>
+                              </p>
+                            );
+                          })}
+                          <div
+                            style={{ alignSelf: "flex-end" }}
+                            className="text-xs text-gray-500 self-center mr-3 ml-3 mt-2"
+                          >
+                            {format(
+                              parseISO(greeting.createdAt),
+                              "MMM d, y hh:mm aaa"
+                            )}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           </div>
-        </div>
+        ) : null}
+
         <AlertDialog.Portal>
           <AlertDialog.Overlay className="AlertDialogOverlay" />
           <AlertDialog.Content className="AlertDialogContent">
