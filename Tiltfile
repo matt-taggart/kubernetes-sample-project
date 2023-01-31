@@ -63,5 +63,18 @@ docker_build(
     ]
 )
 
+docker_build(
+    'us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/images',
+    context='./images',
+    dockerfile='./images/Dockerfile.images.dev',
+    live_update=[
+        sync('./images', '/app'),
+        run(
+            'pnpm install',
+            trigger=['./images/package.json']
+        )
+    ]
+)
+
 k8s_yaml(kustomize('./kustomize/environments/development', flags = ["--enable-alpha-plugins"]))
 secret_settings(disable_scrub = True)

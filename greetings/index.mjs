@@ -11,11 +11,6 @@ const init = async () => {
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY.trim(),
 });
-console.log(
-  "%cprocess.env.OPENAI_API_KEY,",
-  "color:cyan; ",
-  process.env.OPENAI_API_KEY
-);
 const openai = new OpenAIApi(configuration);
 
 init().catch((_) => {
@@ -32,13 +27,12 @@ const addGreetingWorker = new Worker(
         temperature: 0.7,
         max_tokens: 500,
       });
-      console.log("%ccompletion", "color:cyan; ", completion.data);
+
       return await GreetingModel.create({
         ...job.data,
         generatedText: completion.data.choices[0].text,
       });
     } catch (error) {
-      console.log("%cerror", "color:cyan; ", error);
       throw error;
     }
   },

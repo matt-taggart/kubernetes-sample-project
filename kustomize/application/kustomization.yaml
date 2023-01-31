@@ -9,4 +9,6 @@ resources:
   - customers-service.yaml
   - greetings-deployment.yaml
   - greetings-service.yaml
+  - images-deployment.yaml
+  - images-service.yaml
   - ingress-service.yaml

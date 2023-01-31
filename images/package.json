@@ -1,0 +1,26 @@
+{
+  "name": "images-microservice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.mjs",
+    "dev": "nodemon index.mjs"
+  },
+  "imports": {
+    "#models/*": "./models/*",
+    "#constants/*": "./constants/*"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/storage": "^6.9.1",
+    "axios": "^1.2.3",
+    "bullmq": "^3.5.1",
+    "mongoose": "^6.8.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}

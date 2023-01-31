@@ -25,8 +25,21 @@ const updateCustomerQueue = new Queue("updateCustomer", REDIS_CONNECTION);
 const addGreetingQueue = new Queue("addGreeting", REDIS_CONNECTION);
 const getGreetingsQueue = new Queue("getGreetings", REDIS_CONNECTION);
 const deleteGreetingsQueue = new Queue("deleteGreetings", REDIS_CONNECTION);
+const generateImageQueue = new Queue("generateImage", REDIS_CONNECTION);
+const saveImageQueue = new Queue("saveImage", REDIS_CONNECTION);
+const getImagesByCustomerQueue = new Queue(
+  "getImagesByCustomer",
+  REDIS_CONNECTION
+);
+const getImageStatusQueue = new Queue("getImageStatus", REDIS_CONNECTION);
 
-app.use(bodyParser());
+app.use(
+  bodyParser({
+    detectJSON: function (ctx) {
+      return /images\/webhook/i.test(ctx.path);
+    },
+  })
+);
 app.use(cors());
 // app.use(logger());
 app.use(errorHandler());
@@ -193,6 +206,83 @@ router.delete("/greetings/:id", verifyJwt, async (ctx) => {
     );
 
     ctx.status = 204;
+  } catch (error) {
+    ctx.throw(400);
+  }
+});
+
+router.get("/images/:id/status", verifyJwt, async (ctx) => {
+  try {
+    const getImageStatusJob = await getImageStatusQueue.add("imageStatus", {
+      id: ctx.request.params.id,
+    });
+    const status = await getImageStatusJob.waitUntilFinished(
+      new QueueEvents("getImageStatus", REDIS_CONNECTION)
+    );
+    console.log("%statuscimage", "color:cyan; ", status);
+
+    ctx.body = { message: "success" };
+  } catch (error) {
+    ctx.throw(400);
+  }
+});
+
+router.post("/images/webhook", async (ctx) => {
+  const parsedBody = JSON.parse(ctx.request.rawBody);
+  const generatedId = parsedBody.id;
+  const image = parsedBody.output[0].image;
+  const status = parsedBody.status;
+
+  const saveImageJob = await saveImageQueue.add("save", {
+    generatedId,
+    image,
+    status,
+  });
+
+  await saveImageJob.waitUntilFinished(
+    new QueueEvents("saveImage", REDIS_CONNECTION)
+  );
+
+  ctx.body = { message: "success" };
+});
+
+router.post("/images", verifyJwt, async (ctx) => {
+  try {
+    const generateImageJob = await generateImageQueue.add("createImage", {
+      prompt: ctx.request.body.prompt,
+      userId: ctx.state.userId,
+    });
+    const image = await generateImageJob.waitUntilFinished(
+      new QueueEvents("generateImage", REDIS_CONNECTION)
+    );
+
+    ctx.body = {
+      id: image._id,
+      status: image.status,
+      generatedId: image.generatedId,
+      createdAt: image.createdAt,
+      userId: ctx.state.userId,
+    };
+  } catch (error) {
+    console.log("%cerror", "color:cyan; ", error);
+    ctx.throw(400);
+  }
+});
+
+router.get("/images", verifyJwt, async (ctx) => {
+  try {
+    const getImagesByCustomerJob = await getImagesByCustomerQueue.add(
+      "createImage",
+      {
+        userId: ctx.state.userId,
+      }
+    );
+    const images = await getImagesByCustomerJob.waitUntilFinished(
+      new QueueEvents("getImagesByCustomer", REDIS_CONNECTION)
+    );
+    console.log("%cimages", "color:cyan; ", images);
+
+    ctx.body = { images };
   } catch (error) {
     ctx.throw(400);
   }
