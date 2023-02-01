@@ -277,10 +277,23 @@ router.get("/images", verifyJwt, async (ctx) => {
         userId: ctx.state.userId,
       }
     );
-    const images = await getImagesByCustomerJob.waitUntilFinished(
+    const processedImages = await getImagesByCustomerJob.waitUntilFinished(
       new QueueEvents("getImagesByCustomer", REDIS_CONNECTION)
     );
-    console.log("%cimages", "color:cyan; ", images);
+    const images = [...processedImages]
+      .sort((a, b) => {
+        const dateA = new Date(a.createdAt).getTime();
+        const dateB = new Date(b.createdAt).getTime();
+
+        return dateB - dateA;
+      })
+      .map((processedImage) => ({
+        id: processedImage._id,
+        photoUrl: processedImage.photoUrl,
+        prompt: processedImage.prompt,
+        status: processedImage.status,
+        createdAt: processedImage.createdAt,
+      }));
 
     ctx.body = { images };
   } catch (error) {

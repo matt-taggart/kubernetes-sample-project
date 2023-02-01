@@ -14,18 +14,10 @@ init().catch((_) => {
   process.exit(0);
 });
 
-/**
- * TODO(developer):
- *  1. Uncomment and replace these variables before running the sample.
- *  2. Set up ADC as described in https://cloud.google.com/docs/authentication/external/set-up-adc
- *  3. Make sure you have the necessary permission to list storage buckets "storage.buckets.list"
- *    (https://cloud.google.com/storage/docs/access-control/iam-permissions#bucket_permissions)
- */
-const projectId = "elegant-tangent-374007";
 const BUCKET_NAME = "card_couture";
 
 const storage = new Storage({
-  projectId,
+  keyFilename: "service-account.json",
 });
 
 const generateImageWorker = new Worker(
@@ -39,7 +31,7 @@ const generateImageWorker = new Worker(
           input: {
             prompt: job.data.prompt,
           },
-          webhook: "https://9c6b-70-190-230-170.ngrok.io/images/webhook",
+          webhook: "https://d972-70-190-230-170.ngrok.io/images/webhook",
         },
         headers: {
           Authorization: `Bearer ${process.env.RUNPOD_API_KEY.trim()}`,
@@ -105,11 +97,24 @@ const getImagesByCustomerWorker = new Worker(
       // Lists files in the bucket, filtered by a prefix
       const [files] = await storage.bucket(BUCKET_NAME).getFiles(options);
 
-      return files.map((file) => {
-        console.log(file.name);
-        const url = `https://${BUCKET_NAME}.storage.googleapis.com/${file.name}`;
-        return { url };
+      const signedUrls = files.map(async (file) => {
+        const options = {
+          version: "v2", // defaults to 'v2' if missing.
+          action: "read",
+          expires: Date.now() + 1000 * 60 * 60, // one hour
+        };
+
+        const [photoUrl] = await storage
+          .bucket(BUCKET_NAME)
+          .file(file.name)
+          .getSignedUrl(options);
+
+        const generatedId = file.name.split("/")[1];
+
+        return await ImageModel.findOneAndUpdate({ generatedId }, { photoUrl });
       });
+
+      return await Promise.all(signedUrls);
     } catch (error) {
       throw error;
     }
@@ -125,6 +130,7 @@ getImagesByCustomerWorker.on("failed", (job, err) => {
 const saveImageWorker = new Worker(
   "saveImage",
   async (job) => {
+    console.log("%cjob", "color:cyan; ", job.data);
     try {
       const [bucketExist] = await storage.bucket(BUCKET_NAME).exists();
       if (!bucketExist) {
@@ -134,9 +140,15 @@ const saveImageWorker = new Worker(
         responseType: "arraybuffer",
       });
 
-      const savedImage = await ImageModel.findOne({
-        generatedId: job.data.generatedId,
-      });
+      const savedImage = await ImageModel.findOneAndUpdate(
+        {
+          generatedId: job.data.generatedId,
+        },
+        {
+          status: job.data.status,
+          photoUrl: job.data.image,
+        }
+      );
 
       const buffer = Buffer.from(response.data, "utf-8");
       const file = storage
@@ -147,6 +159,7 @@ const saveImageWorker = new Worker(
 
       return { message: "success" };
     } catch (error) {
+      console.log("%cerror", "color:cyan; ", error);
       throw error;
     }
   },

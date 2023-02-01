@@ -11,7 +11,7 @@ import { checkAuthRoute } from "../middleware/checkAuthRoute";
 export default function Images({ accessToken }) {
   const [loading, setLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
-  const [greetings, setGreetings] = useState([]);
+  const [images, setImages] = useState([]);
   const [greetingIdToDelete, setGreetingIdToDelete] = useState(null);
   const [open, setOpen] = useState(false);
 
@@ -34,9 +34,9 @@ export default function Images({ accessToken }) {
           },
         });
 
-        setGreetings(data.greetings);
+        setImages(data.images);
       },
-    [accessToken, setGreetings]
+    [accessToken, setImages]
   );
 
   async function addImage(values) {
@@ -54,8 +54,9 @@ export default function Images({ accessToken }) {
       });
       setLoading(false);
 
-      // await fetchImages();
       reset();
+
+      await fetchImages();
     } catch (error) {
       setLoading(false);
     }
@@ -185,60 +186,64 @@ export default function Images({ accessToken }) {
             </div>
           </div>
         </div>
-        {greetings?.length ? (
-          <div className="flex-shrink max-w-full px-4 w-full mb-6">
-            <div className="p-6 bg-white rounded-lg shadow-lg h-full">
-              <ul className="px-0 border-b border-gray-200 dark:border-gray-700">
-                {greetings.map((greeting) => {
-                  const values = greeting.generatedText
-                    .split(/\n/)
-                    .filter(Boolean);
-                  console.log("%cvalues", "color:cyan; ", values);
+
+        <div className="mx-auto p-2">
+          <div className="flex flex-wrap flex-row">
+            {images?.length ? (
+              <div className="grid px-4">
+                {images.map((image) => {
                   return (
-                    <li className="group" key={greeting.id}>
-                      <div className="border border-gray-200 border-b-0 list-none rounded-sm py-3 px-4 flex justify-between items-center">
-                        <div className="flex flex-col w-full">
-                          <AlertDialog.Trigger
-                            style={{
-                              position: "absolute",
-                              alignSelf: "flex-end",
-                            }}
-                          >
-                            <button
-                              onClick={() => {
-                                setOpen(true);
-                                setGreetingIdToDelete(greeting.id);
-                              }}
-                            >
-                              <Trash2 size={18} />
-                            </button>
-                          </AlertDialog.Trigger>
-                          <p>{greeting.prompt}</p>
-                          {values.map((generatedText) => {
-                            return (
-                              <p className="mt-2">
-                                <small>{generatedText}</small>
-                              </p>
-                            );
-                          })}
-                          <div
-                            style={{ alignSelf: "flex-end" }}
-                            className="text-xs text-gray-500 self-center mr-3 ml-3 mt-2"
-                          >
-                            {format(
-                              parseISO(greeting.createdAt),
-                              "MMM d, y hh:mm aaa"
-                            )}
+                    <div
+                      key={image.id}
+                      className="flex flex-col bg-white dark:bg-gray-800 mb-12 rounded overflow-hidden shadow"
+                    >
+                      <div className="relative overflow-hidden">
+                        <a href="#">
+                          <div className="absolute inset-0 hover:bg-white opacity-0 transition duration-700 hover:opacity-10"></div>
+                          <img className="w-full" src={image.photoUrl} alt="alt title" />
+                        </a>
+                      </div>
+                      <div className="p-6 flex-1">
+                        <div className="mb-2">
+                          <div className="flex align-center text-gray-500">
+                            <div className="mr-2">
+                              <svg
+                                className="bi bi-calendar ltr:mr-2 rtl:ml-2 inline-block"
+                                width=".8rem"
+                                height=".8rem"
+                                viewBox="0 0 16 16"
+                                fill="currentColor"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M14 0H2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V2a2 2 0 00-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"
+                                  clip-rule="evenodd"
+                                ></path>
+                                <path
+                                  fillRule="evenodd"
+                                  d="M6.5 7a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm-9 3a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm-9 3a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2z"
+                                  clip-rule="evenodd"
+                                ></path>
+                              </svg>
+                            </div>
+                            <span>
+                              {format(
+                                parseISO(image.createdAt),
+                                "MMM d, y hh:mm aaa"
+                              )}
+                            </span>
                           </div>
                         </div>
+                        <p>{image.prompt}</p>
                       </div>
-                    </li>
+                    </div>
                   );
                 })}
-              </ul>
-            </div>
+              </div>
+            ) : null}
           </div>
-        ) : null}
+        </div>
 
         <AlertDialog.Portal>
           <AlertDialog.Overlay className="AlertDialogOverlay" />
