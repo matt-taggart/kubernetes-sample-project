@@ -31,7 +31,7 @@ const generateImageWorker = new Worker(
           input: {
             prompt: job.data.prompt,
           },
-          webhook: "https://d972-70-190-230-170.ngrok.io/images/webhook",
+          webhook: "http://c53a-70-190-230-170.ngrok.io/images/webhook",
         },
         headers: {
           Authorization: `Bearer ${process.env.RUNPOD_API_KEY.trim()}`,
@@ -114,7 +114,16 @@ const getImagesByCustomerWorker = new Worker(
         return await ImageModel.findOneAndUpdate({ generatedId }, { photoUrl });
       });
 
-      return await Promise.all(signedUrls);
+      const processedImages = await Promise.all(signedUrls);
+      const pendingImages = await ImageModel.find({
+        status: "IN_QUEUE",
+        userId: job.data.userId,
+      });
+
+      return {
+        processedImages,
+        pendingImages,
+      };
     } catch (error) {
       throw error;
     }

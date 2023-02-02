@@ -12,6 +12,7 @@ export default function Images({ accessToken }) {
   const [loading, setLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [images, setImages] = useState([]);
+  const [pendingImages, setPendingImages] = useState([]);
   const [greetingIdToDelete, setGreetingIdToDelete] = useState(null);
   const [open, setOpen] = useState(false);
 
@@ -35,6 +36,7 @@ export default function Images({ accessToken }) {
         });
 
         setImages(data.images);
+        setPendingImages(data.pendingImages);
       },
     [accessToken, setImages]
   );
@@ -101,12 +103,36 @@ export default function Images({ accessToken }) {
                   className="flex flex-wrap flex-row -mx-4"
                   onSubmit={handleSubmit(addImage)}
                 >
+                  <div className="flex-shrink flex flex-col max-w-full px-4 w-full mb-4">
+                    <label className="inline-block mb-2">Choose Style</label>
+                    <div className="inline-flex" role="group">
+                      <button
+                        type="button"
+                        className="rounded-l py-2 px-4 inline-block text-center mb-3 leading-normal text-indigo-500 bg-white border border-indigo-500 hover:text-gray-100 hover:bg-indigo-600 hover:ring-0 hover:border-indigo-600 focus:text-gray-100 focus:bg-indigo-600 focus:border-indigo-600 focus:outline-none focus:ring-0 -mr-0.5 -ml-0.5"
+                      >
+                        Anime
+                      </button>
+                      <button
+                        type="button"
+                        className="py-2 px-4 inline-block text-center mb-3 leading-normal text-indigo-500 bg-white border border-indigo-500 hover:text-gray-100 hover:bg-indigo-600 hover:ring-0 hover:border-indigo-600 focus:text-gray-100 focus:bg-indigo-600 focus:border-indigo-600 focus:outline-none focus:ring-0"
+                      >
+                        Realistic
+                      </button>
+                      <button
+                        type="button"
+                        className="rounded-r py-2 px-4 inline-block text-center mb-3 leading-normal text-indigo-500 bg-white border border-indigo-500 hover:text-gray-100 hover:bg-indigo-600 hover:ring-0 hover:border-indigo-600 focus:text-gray-100 focus:bg-indigo-600 focus:border-indigo-600 focus:outline-none focus:ring-0 -ml-0.5 -mr-0.5"
+                      >
+                        Conceptual
+                      </button>
+                    </div>
+                  </div>
+
                   <div className="flex-shrink max-w-full px-4 w-full mb-4">
-                    <label htmlFor="inputdes" className="inline-block mb-2">
+                    <label className="inline-block mb-2">
                       Description
                       <p>
                         <small>
-                          A custom image will be gneerated for you based on your
+                          A custom image will be generated for you based on your
                           description.
                         </small>
                       </p>
@@ -187,6 +213,17 @@ export default function Images({ accessToken }) {
           </div>
         </div>
 
+        {pendingImages.length ? (
+          <div className="mx-auto p-2 px-6">
+            <div className="flex flex-wrap flex-row">
+              <div className="relative bg-yellow-100 text-yellow-900 py-3 px-6 rounded mb-4">
+                There are currently <strong>{pendingImages.length}</strong>{" "}
+                images processing.
+              </div>
+            </div>
+          </div>
+        ) : null}
+
         <div className="mx-auto p-2">
           <div className="flex flex-wrap flex-row">
             {images?.length ? (
@@ -200,7 +237,11 @@ export default function Images({ accessToken }) {
                       <div className="relative overflow-hidden">
                         <a href="#">
                           <div className="absolute inset-0 hover:bg-white opacity-0 transition duration-700 hover:opacity-10"></div>
-                          <img className="w-full" src={image.photoUrl} alt="alt title" />
+                          <img
+                            className="w-full"
+                            src={image.photoUrl}
+                            alt="alt title"
+                          />
                         </a>
                       </div>
                       <div className="p-6 flex-1">
@@ -208,7 +249,7 @@ export default function Images({ accessToken }) {
                           <div className="flex align-center text-gray-500">
                             <div className="mr-2">
                               <svg
-                                className="bi bi-calendar ltr:mr-2 rtl:ml-2 inline-block"
+                                className="bi bi-calendar mr-2 ml-2 inline-block"
                                 width=".8rem"
                                 height=".8rem"
                                 viewBox="0 0 16 16"
@@ -230,7 +271,7 @@ export default function Images({ accessToken }) {
                             <span>
                               {format(
                                 parseISO(image.createdAt),
-                                "MMM d, y hh:mm aaa"
+                                "MMM d, y h:mm aaa"
                               )}
                             </span>
                           </div>

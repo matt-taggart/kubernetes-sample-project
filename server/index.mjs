@@ -277,9 +277,10 @@ router.get("/images", verifyJwt, async (ctx) => {
         userId: ctx.state.userId,
       }
     );
-    const processedImages = await getImagesByCustomerJob.waitUntilFinished(
-      new QueueEvents("getImagesByCustomer", REDIS_CONNECTION)
-    );
+    const { processedImages, pendingImages } =
+      await getImagesByCustomerJob.waitUntilFinished(
+        new QueueEvents("getImagesByCustomer", REDIS_CONNECTION)
+      );
     const images = [...processedImages]
       .sort((a, b) => {
         const dateA = new Date(a.createdAt).getTime();
@@ -295,7 +296,7 @@ router.get("/images", verifyJwt, async (ctx) => {
         createdAt: processedImage.createdAt,
       }));
 
-    ctx.body = { images };
+    ctx.body = { images, pendingImages };
   } catch (error) {
     ctx.throw(400);
   }
