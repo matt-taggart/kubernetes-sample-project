@@ -5,12 +5,16 @@ import { Trash2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { format, parseISO } from "date-fns";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
+import * as Toast from "@radix-ui/react-toast";
+
 import AppLayout from "../components/AppLayout";
 import { checkAuthRoute } from "../middleware/checkAuthRoute";
+import { IMAGE_POLLING_INTERVAL } from "../constants/polling-constants";
 
 export default function Images({ accessToken }) {
   const [loading, setLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [toastOpen, setToastOpen] = useState(false);
   const [images, setImages] = useState([]);
   const [pendingImages, setPendingImages] = useState([]);
   const [greetingIdToDelete, setGreetingIdToDelete] = useState(null);
@@ -37,6 +41,8 @@ export default function Images({ accessToken }) {
 
         setImages(data.images);
         setPendingImages(data.pendingImages);
+
+        return data;
       },
     [accessToken, setImages]
   );
@@ -89,6 +95,28 @@ export default function Images({ accessToken }) {
     fetchImages();
   }, [fetchImages]);
 
+  useEffect(() => {
+    let id;
+    if (pendingImages.length) {
+      // poll to get status
+      id = window.setInterval(async () => {
+        const data = await fetchImages();
+        console.log("%cdata", "color:cyan; ", data);
+        const currentPendingImageCount = pendingImages.length;
+        const updatedPendingImageCount = data.pendingImages.length;
+
+        if (currentPendingImageCount !== updatedPendingImageCount) {
+          const difference =
+            currentPendingImageCount - updatedPendingImageCount;
+          console.log("do a lotta stuffis", difference);
+          setToastOpen(true);
+        }
+      }, IMAGE_POLLING_INTERVAL);
+    }
+
+    return () => clearInterval(id);
+  }, [pendingImages, fetchImages]);
+
   return (
     <>
       <AlertDialog.Root open={open} onOpenChange={setOpen}>
@@ -128,15 +156,7 @@ export default function Images({ accessToken }) {
                   </div>
 
                   <div className="flex-shrink max-w-full px-4 w-full mb-4">
-                    <label className="inline-block mb-2">
-                      Description
-                      <p>
-                        <small>
-                          A custom image will be generated for you based on your
-                          description.
-                        </small>
-                      </p>
-                    </label>
+                    <label className="inline-block mb-2">Description</label>
                     <div
                       className={clsx("form-group", {
                         "has-danger": errors.prompt,
@@ -249,7 +269,7 @@ export default function Images({ accessToken }) {
                           <div className="flex align-center text-gray-500">
                             <div className="mr-2">
                               <svg
-                                className="bi bi-calendar mr-2 ml-2 inline-block"
+                                className="bi bi-calendar mr-2 inline-block"
                                 width=".8rem"
                                 height=".8rem"
                                 viewBox="0 0 16 16"
@@ -346,6 +366,26 @@ export default function Images({ accessToken }) {
           </AlertDialog.Content>
         </AlertDialog.Portal>
       </AlertDialog.Root>
+      <Toast.Provider swipeDirection="right">
+        <Toast.Root
+          className="ToastRoot"
+          open={true}
+          onOpenChange={setToastOpen}
+        >
+          <Toast.Title className="ToastTitle">Success!</Toast.Title>
+          <Toast.Description asChild>
+            <p className="ToastDescription">Your image has been processed</p>
+          </Toast.Description>
+          <Toast.Action
+            className="ToastAction"
+            asChild
+            altText="Goto schedule to undo"
+          >
+            <button className="Button small green">Jump to Image</button>
+          </Toast.Action>
+        </Toast.Root>
+        <Toast.Viewport className="ToastViewport" />
+      </Toast.Provider>
     </>
   );
 }
