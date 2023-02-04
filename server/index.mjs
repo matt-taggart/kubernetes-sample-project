@@ -219,7 +219,6 @@ router.get("/images/:id/status", verifyJwt, async (ctx) => {
     const status = await getImageStatusJob.waitUntilFinished(
       new QueueEvents("getImageStatus", REDIS_CONNECTION)
     );
-    console.log("%statuscimage", "color:cyan; ", status);
 
     ctx.body = { message: "success" };
   } catch (error) {
@@ -265,7 +264,6 @@ router.post("/images", verifyJwt, async (ctx) => {
       userId: ctx.state.userId,
     };
   } catch (error) {
-    console.log("%cerror", "color:cyan; ", error);
     ctx.throw(400);
   }
 });

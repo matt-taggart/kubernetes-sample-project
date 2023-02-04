@@ -3,10 +3,7 @@ import mongoose from "mongoose";
 import { Worker } from "bullmq";
 import { Storage } from "@google-cloud/storage";
 import { REDIS_CONNECTION } from "#constants/redis.mjs";
-import {
-  DESCRIPTION_TO_MODEL,
-  MODEL_DESCRIPTIONS,
-} from "#constants/models.mjs";
+import { DESCRIPTION_TO_MODEL } from "#constants/models.mjs";
 import { ImageModel } from "#models/images.mjs";
 
 const init = async () => {
@@ -23,19 +20,10 @@ const storage = new Storage({
   keyFilename: "service-account.json",
 });
 
-const getHeaders = (model) => {
-  return model === MODEL_DESCRIPTIONS.REALISTIC
-    ? {
-        num_inference_steps: 500,
-      }
-    : {};
-};
-
 const generateImageWorker = new Worker(
   "generateImage",
   async (job) => {
     const url = DESCRIPTION_TO_MODEL[job.data.model];
-    console.log("%curl", "color:cyan; ", url);
     try {
       const { data } = await axios({
         url,
@@ -43,7 +31,6 @@ const generateImageWorker = new Worker(
         data: {
           input: {
             prompt: job.data.prompt,
-            ...getHeaders(job.data.model),
           },
           webhook: "https://9f8f-70-190-230-170.ngrok.io/images/webhook",
         },
@@ -52,7 +39,6 @@ const generateImageWorker = new Worker(
         },
         withCredentials: true,
       });
-      console.log("%cdata", "color:cyan; ", data);
 
       const response = await ImageModel.create({
         generatedId: data.id,
@@ -183,7 +169,6 @@ const saveImageWorker = new Worker(
 
       return { message: "success" };
     } catch (error) {
-      console.log("%cerror", "color:cyan; ", error);
       throw error;
     }
   },
