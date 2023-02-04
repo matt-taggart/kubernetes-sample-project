@@ -21,9 +21,12 @@ export default function Images({ accessToken }) {
   const [images, setImages] = useState([]);
   const [model, setModel] = useState(MODEL_DESCRIPTIONS.ANIME);
   const [pendingImages, setPendingImages] = useState([]);
-  const [selectedImage, setSelectedImage] = useState([]);
+  const [jumpImageId, setJumpImageId] = useState("");
+  console.log("%cjumpImageId", "color:cyan; ", jumpImageId);
   const [greetingIdToDelete, setGreetingIdToDelete] = useState(null);
   const [open, setOpen] = useState(false);
+  const hash = window.location.hash.slice(1);
+  console.log("%chash", "color:cyan; ", hash);
 
   const {
     register,
@@ -109,9 +112,18 @@ export default function Images({ accessToken }) {
         const updatedPendingImageCount = data.pendingImages.length;
 
         if (currentPendingImageCount !== updatedPendingImageCount) {
-          const difference =
-            currentPendingImageCount - updatedPendingImageCount;
-          console.log("do a lotta stuffis", difference);
+          // [id: 1, id: 2]
+          // [id: 1]
+
+          const processedImage = pendingImages.find((pendingImage) => {
+            console.log("%cpendingImage", "color:cyan; ", pendingImage);
+            return !data.pendingImages
+              .map((pendingImage) => pendingImage.id)
+              .includes(pendingImage.id);
+          });
+          console.log("%cprocessedImage", "color:cyan; ", processedImage);
+
+          setJumpImageId(processedImage?.id);
           setToastOpen(true);
         }
       }, IMAGE_POLLING_INTERVAL);
@@ -288,8 +300,17 @@ export default function Images({ accessToken }) {
           <div className="mx-auto p-2 px-6">
             <div className="flex flex-wrap flex-row">
               <div className="relative bg-yellow-100 text-yellow-900 py-3 px-6 rounded mb-4">
-                There are currently <strong>{pendingImages.length}</strong>{" "}
-                images processing.
+                {pendingImages.length > 1 ? (
+                  <>
+                    There are currently <strong>{pendingImages.length}</strong>{" "}
+                    images processing.
+                  </>
+                ) : (
+                  <>
+                    There is currently <strong>{pendingImages.length}</strong>{" "}
+                    image processing
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -308,9 +329,11 @@ export default function Images({ accessToken }) {
                       className={clsx(
                         "flex flex-col bg-white dark:bg-gray-800 mb-12 rounded overflow-hidden",
                         {
-                          border: false,
-                          "border-indigo-500": false,
-                          shadow: true,
+                          border:
+                            image.id === jumpImageId && jumpImageId === hash,
+                          "border-indigo-500":
+                            image.id === jumpImageId && jumpImageId === hash,
+                          shadow: image.id === jumpImageId,
                         }
                       )}
                     >
@@ -441,7 +464,7 @@ export default function Images({ accessToken }) {
             asChild
             altText="Goto schedule to undo"
           >
-            <a href="#63dc5eb6ef6bce391129e332">
+            <a href={`#${jumpImageId}`}>
               <button className="Button small green">Jump to Image</button>
             </a>
           </Toast.Action>

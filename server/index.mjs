@@ -295,7 +295,22 @@ router.get("/images", verifyJwt, async (ctx) => {
         createdAt: processedImage.createdAt,
       }));
 
-    ctx.body = { images, pendingImages };
+    const parsedPendingImages = [...pendingImages]
+      .sort((a, b) => {
+        const dateA = new Date(a.createdAt).getTime();
+        const dateB = new Date(b.createdAt).getTime();
+
+        return dateB - dateA;
+      })
+      .map((pendingImage) => ({
+        id: pendingImage._id,
+        photoUrl: pendingImage.photoUrl,
+        prompt: pendingImage.prompt,
+        status: pendingImage.status,
+        createdAt: pendingImage.createdAt,
+      }));
+
+    ctx.body = { images, pendingImages: parsedPendingImages };
   } catch (error) {
     ctx.throw(400);
   }
