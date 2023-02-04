@@ -10,13 +10,18 @@ import * as Toast from "@radix-ui/react-toast";
 import AppLayout from "../components/AppLayout";
 import { checkAuthRoute } from "../middleware/checkAuthRoute";
 import { IMAGE_POLLING_INTERVAL } from "../constants/polling-constants";
+import { useRouter } from "next/router";
+import { MODEL_DESCRIPTIONS } from "../constants/model-constants";
 
 export default function Images({ accessToken }) {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [toastOpen, setToastOpen] = useState(false);
   const [images, setImages] = useState([]);
+  const [model, setModel] = useState(MODEL_DESCRIPTIONS.ANIME);
   const [pendingImages, setPendingImages] = useState([]);
+  const [selectedImage, setSelectedImage] = useState([]);
   const [greetingIdToDelete, setGreetingIdToDelete] = useState(null);
   const [open, setOpen] = useState(false);
 
@@ -48,7 +53,6 @@ export default function Images({ accessToken }) {
   );
 
   async function addImage(values) {
-    console.log("%cvalues", "color:cyan; ", values);
     try {
       setLoading(true);
       await axios({
@@ -58,7 +62,7 @@ export default function Images({ accessToken }) {
         headers: {
           authorization: `Bearer ${accessToken}`,
         },
-        data: values,
+        data: { ...values, model },
       });
       setLoading(false);
 
@@ -85,7 +89,7 @@ export default function Images({ accessToken }) {
       setGreetingIdToDelete(null);
       setDeleteLoading(false);
       setOpen(false);
-      await fetchGreetings();
+      await fetchImages();
     } catch (error) {
       setDeleteLoading(false);
     }
@@ -101,7 +105,6 @@ export default function Images({ accessToken }) {
       // poll to get status
       id = window.setInterval(async () => {
         const data = await fetchImages();
-        console.log("%cdata", "color:cyan; ", data);
         const currentPendingImageCount = pendingImages.length;
         const updatedPendingImageCount = data.pendingImages.length;
 
@@ -116,6 +119,10 @@ export default function Images({ accessToken }) {
 
     return () => clearInterval(id);
   }, [pendingImages, fetchImages]);
+
+  const isModelSelected = (currentModel, modelType) => {
+    return currentModel === modelType;
+  };
 
   return (
     <>
@@ -136,21 +143,65 @@ export default function Images({ accessToken }) {
                     <div className="inline-flex" role="group">
                       <button
                         type="button"
-                        className="rounded-l py-2 px-4 inline-block text-center mb-3 leading-normal text-indigo-500 bg-white border border-indigo-500 hover:text-gray-100 hover:bg-indigo-600 hover:ring-0 hover:border-indigo-600 focus:text-gray-100 focus:bg-indigo-600 focus:border-indigo-600 focus:outline-none focus:ring-0 -mr-0.5 -ml-0.5"
+                        onClick={() => setModel(MODEL_DESCRIPTIONS.ANIME)}
+                        className={clsx(
+                          "rounded-l py-2 px-4 inline-block text-center mb-3 leading-normal text-indigo-500 bg-white border border-indigo-500 hover:text-gray-100 hover:bg-indigo-600 hover:ring-0 hover:border-indigo-600 -mr-0.5 -ml-0.5",
+                          {
+                            "text-gray-100": isModelSelected(
+                              model,
+                              MODEL_DESCRIPTIONS.ANIME
+                            ),
+                            "bg-indigo-600": isModelSelected(
+                              model,
+                              MODEL_DESCRIPTIONS.ANIME
+                            ),
+                            "border-indigo-600": isModelSelected(
+                              model,
+                              MODEL_DESCRIPTIONS.ANIME
+                            ),
+                            "outline-none": isModelSelected(
+                              model,
+                              MODEL_DESCRIPTIONS.ANIME
+                            ),
+                            "ring-0": isModelSelected(
+                              model,
+                              MODEL_DESCRIPTIONS.ANIME
+                            ),
+                          }
+                        )}
                       >
                         Anime
                       </button>
                       <button
                         type="button"
-                        className="py-2 px-4 inline-block text-center mb-3 leading-normal text-indigo-500 bg-white border border-indigo-500 hover:text-gray-100 hover:bg-indigo-600 hover:ring-0 hover:border-indigo-600 focus:text-gray-100 focus:bg-indigo-600 focus:border-indigo-600 focus:outline-none focus:ring-0"
+                        onClick={() => setModel(MODEL_DESCRIPTIONS.REALISTIC)}
+                        className={clsx(
+                          "rounded-r py-2 px-4 inline-block text-center mb-3 leading-normal text-indigo-500 bg-white border border-indigo-500 hover:text-gray-100 hover:bg-indigo-600 hover:ring-0 hover:border-indigo-600 -ml-0.5 -mr-0.5",
+                          {
+                            "text-gray-100": isModelSelected(
+                              model,
+                              MODEL_DESCRIPTIONS.REALISTIC
+                            ),
+                            "bg-indigo-600": isModelSelected(
+                              model,
+                              MODEL_DESCRIPTIONS.REALISTIC
+                            ),
+                            "border-indigo-600": isModelSelected(
+                              model,
+                              MODEL_DESCRIPTIONS.REALISTIC
+                            ),
+                            "outline-none": isModelSelected(
+                              model,
+                              MODEL_DESCRIPTIONS.REALISTIC
+                            ),
+                            "ring-0": isModelSelected(
+                              model,
+                              MODEL_DESCRIPTIONS.REALISTIC
+                            ),
+                          }
+                        )}
                       >
                         Realistic
-                      </button>
-                      <button
-                        type="button"
-                        className="rounded-r py-2 px-4 inline-block text-center mb-3 leading-normal text-indigo-500 bg-white border border-indigo-500 hover:text-gray-100 hover:bg-indigo-600 hover:ring-0 hover:border-indigo-600 focus:text-gray-100 focus:bg-indigo-600 focus:border-indigo-600 focus:outline-none focus:ring-0 -ml-0.5 -mr-0.5"
-                      >
-                        Conceptual
                       </button>
                     </div>
                   </div>
@@ -251,8 +302,17 @@ export default function Images({ accessToken }) {
                 {images.map((image) => {
                   return (
                     <div
+                      id={image.id}
                       key={image.id}
-                      className="flex flex-col bg-white dark:bg-gray-800 mb-12 rounded overflow-hidden shadow"
+                      style={{ borderWidth: "2.5px" }}
+                      className={clsx(
+                        "flex flex-col bg-white dark:bg-gray-800 mb-12 rounded overflow-hidden",
+                        {
+                          border: false,
+                          "border-indigo-500": false,
+                          shadow: true,
+                        }
+                      )}
                     >
                       <div className="relative overflow-hidden">
                         <a href="#">
@@ -369,7 +429,7 @@ export default function Images({ accessToken }) {
       <Toast.Provider swipeDirection="right">
         <Toast.Root
           className="ToastRoot"
-          open={true}
+          open={toastOpen}
           onOpenChange={setToastOpen}
         >
           <Toast.Title className="ToastTitle">Success!</Toast.Title>
@@ -381,7 +441,9 @@ export default function Images({ accessToken }) {
             asChild
             altText="Goto schedule to undo"
           >
-            <button className="Button small green">Jump to Image</button>
+            <a href="#63dc5eb6ef6bce391129e332">
+              <button className="Button small green">Jump to Image</button>
+            </a>
           </Toast.Action>
         </Toast.Root>
         <Toast.Viewport className="ToastViewport" />

@@ -251,6 +251,7 @@ router.post("/images", verifyJwt, async (ctx) => {
     const generateImageJob = await generateImageQueue.add("createImage", {
       prompt: ctx.request.body.prompt,
       userId: ctx.state.userId,
+      model: ctx.request.body.model,
     });
     const image = await generateImageJob.waitUntilFinished(
       new QueueEvents("generateImage", REDIS_CONNECTION)

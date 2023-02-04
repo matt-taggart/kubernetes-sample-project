@@ -3,7 +3,10 @@ import mongoose from "mongoose";
 import { Worker } from "bullmq";
 import { Storage } from "@google-cloud/storage";
 import { REDIS_CONNECTION } from "#constants/redis.mjs";
-import { RUNPOD_BASE_URL } from "#constants/runpod.mjs";
+import {
+  DESCRIPTION_TO_MODEL,
+  MODEL_DESCRIPTIONS,
+} from "#constants/models.mjs";
 import { ImageModel } from "#models/images.mjs";
 
 const init = async () => {
@@ -20,24 +23,36 @@ const storage = new Storage({
   keyFilename: "service-account.json",
 });
 
+const getHeaders = (model) => {
+  return model === MODEL_DESCRIPTIONS.REALISTIC
+    ? {
+        num_inference_steps: 500,
+      }
+    : {};
+};
+
 const generateImageWorker = new Worker(
   "generateImage",
   async (job) => {
+    const url = DESCRIPTION_TO_MODEL[job.data.model];
+    console.log("%curl", "color:cyan; ", url);
     try {
       const { data } = await axios({
-        url: RUNPOD_BASE_URL,
+        url,
         method: "post",
         data: {
           input: {
             prompt: job.data.prompt,
+            ...getHeaders(job.data.model),
           },
-          webhook: "https://2f4a-70-190-230-170.ngrok.io/images/webhook",
+          webhook: "https://9f8f-70-190-230-170.ngrok.io/images/webhook",
         },
         headers: {
           Authorization: `Bearer ${process.env.RUNPOD_API_KEY.trim()}`,
         },
         withCredentials: true,
       });
+      console.log("%cdata", "color:cyan; ", data);
 
       const response = await ImageModel.create({
         generatedId: data.id,
