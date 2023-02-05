@@ -20,9 +20,9 @@ export default function Images({ accessToken }) {
   const [model, setModel] = useState(MODEL_DESCRIPTIONS.ANIME);
   const [pendingImages, setPendingImages] = useState([]);
   const [jumpImageId, setJumpImageId] = useState("");
-  console.log("%cjumpImageId", "color:cyan; ", jumpImageId);
   const [greetingIdToDelete, setGreetingIdToDelete] = useState(null);
   const [open, setOpen] = useState(false);
+  const [nsfwContentMessage, setNsfwContentMessage] = useState("");
 
   const {
     register,
@@ -42,6 +42,10 @@ export default function Images({ accessToken }) {
             authorization: `Bearer ${accessToken}`,
           },
         });
+
+        if (data.error) {
+          setNsfwContentMessage(data.error);
+        }
 
         setImages(data.images);
         setPendingImages(data.pendingImages);
@@ -97,6 +101,18 @@ export default function Images({ accessToken }) {
   useEffect(() => {
     fetchImages();
   }, [fetchImages]);
+
+  useEffect(() => {
+    let id;
+
+    const NSFW_ALERT_TIMEOUT = 5000;
+
+    id = window.setTimeout(() => {
+      setNsfwContentMessage("");
+    }, NSFW_ALERT_TIMEOUT);
+
+    return () => clearTimeout(id);
+  }, [nsfwContentMessage]);
 
   useEffect(() => {
     let id;
@@ -295,6 +311,11 @@ export default function Images({ accessToken }) {
               </div>
             </div>
           </div>
+          {nsfwContentMessage ? (
+            <div className="relative bg-red-100 text-red-900 py-3 px-6 rounded mb-4">
+              {nsfwContentMessage}
+            </div>
+          ) : null}
         </div>
 
         {pendingImages.length ? (

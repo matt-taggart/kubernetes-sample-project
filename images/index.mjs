@@ -40,6 +40,13 @@ const generateImageWorker = new Worker(
         withCredentials: true,
       });
 
+      if (data.status === "FAILED") {
+        return {
+          status: "FAILED",
+          error: data.error,
+        };
+      }
+
       const response = await ImageModel.create({
         generatedId: data.id,
         prompt: job.data.prompt,
@@ -140,7 +147,6 @@ getImagesByCustomerWorker.on("failed", (job, err) => {
 const saveImageWorker = new Worker(
   "saveImage",
   async (job) => {
-    console.log("%cjob", "color:cyan; ", job.data);
     try {
       const [bucketExist] = await storage.bucket(BUCKET_NAME).exists();
       if (!bucketExist) {

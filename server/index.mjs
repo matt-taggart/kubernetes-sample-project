@@ -276,10 +276,16 @@ router.get("/images", verifyJwt, async (ctx) => {
         userId: ctx.state.userId,
       }
     );
-    const { processedImages, pendingImages } =
-      await getImagesByCustomerJob.waitUntilFinished(
-        new QueueEvents("getImagesByCustomer", REDIS_CONNECTION)
-      );
+    const response = await getImagesByCustomerJob.waitUntilFinished(
+      new QueueEvents("getImagesByCustomer", REDIS_CONNECTION)
+    );
+
+    if (response.error) {
+      return { status: response.status, error: response.error };
+    }
+
+    const { processedImages, pendingImages } = response;
+
     const images = [...processedImages]
       .sort((a, b) => {
         const dateA = new Date(a.createdAt).getTime();
