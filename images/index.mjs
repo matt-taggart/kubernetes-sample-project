@@ -32,7 +32,7 @@ const generateImageWorker = new Worker(
           input: {
             prompt: job.data.prompt,
           },
-          webhook: "https://9f8f-70-190-230-170.ngrok.io/images/webhook",
+          webhook: "https://c2d3-174-67-184-138.ngrok.io/images/webhook",
         },
         headers: {
           Authorization: `Bearer ${process.env.RUNPOD_API_KEY.trim()}`,

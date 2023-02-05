@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import clsx from "clsx";
-import { Trash2 } from "lucide-react";
+// import { Trash2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { format, parseISO } from "date-fns";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
@@ -10,11 +10,9 @@ import * as Toast from "@radix-ui/react-toast";
 import AppLayout from "../components/AppLayout";
 import { checkAuthRoute } from "../middleware/checkAuthRoute";
 import { IMAGE_POLLING_INTERVAL } from "../constants/polling-constants";
-import { useRouter } from "next/router";
 import { MODEL_DESCRIPTIONS } from "../constants/model-constants";
 
 export default function Images({ accessToken }) {
-  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
   const [toastOpen, setToastOpen] = useState(false);
@@ -25,8 +23,6 @@ export default function Images({ accessToken }) {
   console.log("%cjumpImageId", "color:cyan; ", jumpImageId);
   const [greetingIdToDelete, setGreetingIdToDelete] = useState(null);
   const [open, setOpen] = useState(false);
-  const hash = window.location.hash.slice(1);
-  console.log("%chash", "color:cyan; ", hash);
 
   const {
     register,
@@ -112,18 +108,23 @@ export default function Images({ accessToken }) {
         const updatedPendingImageCount = data.pendingImages.length;
 
         if (currentPendingImageCount !== updatedPendingImageCount) {
-          // [id: 1, id: 2]
-          // [id: 1]
+          const pendingImageIds = pendingImages.map(
+            (pendingImage) => pendingImage.id
+          );
+          const updatedPendingImageIds = data.pendingImages.map(
+            (pendingImage) => pendingImage.id
+          );
 
-          const processedImage = pendingImages.find((pendingImage) => {
-            console.log("%cpendingImage", "color:cyan; ", pendingImage);
-            return !data.pendingImages
-              .map((pendingImage) => pendingImage.id)
-              .includes(pendingImage.id);
+          let processedImageId = "";
+
+          pendingImageIds.forEach((pendingImageId) => {
+            if (!updatedPendingImageIds.includes(pendingImageId)) {
+              processedImageId = pendingImageId;
+            }
           });
-          console.log("%cprocessedImage", "color:cyan; ", processedImage);
 
-          setJumpImageId(processedImage?.id);
+          setJumpImageId(processedImageId);
+          await fetchImages();
           setToastOpen(true);
         }
       }, IMAGE_POLLING_INTERVAL);
@@ -329,10 +330,8 @@ export default function Images({ accessToken }) {
                       className={clsx(
                         "flex flex-col bg-white dark:bg-gray-800 mb-12 rounded overflow-hidden",
                         {
-                          border:
-                            image.id === jumpImageId && jumpImageId === hash,
-                          "border-indigo-500":
-                            image.id === jumpImageId && jumpImageId === hash,
+                          border: image.id === jumpImageId,
+                          "border-indigo-500": image.id === jumpImageId,
                           shadow: image.id === jumpImageId,
                         }
                       )}
