@@ -13,10 +13,10 @@ get-ngrok-port:
 	kubectl get svc ngrok-service -o=jsonpath='{.spec.ports[?(@.port==4040)].nodePort}'
 
 update-dev-images:
-	docker build -t auth -f ./auth/Dockerfile.auth.dev ./auth
+	docker build -t auth -f ./auth-microservice/Dockerfile.dev ./auth-microservice
 	docker tag auth us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/auth
 	docker push us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/auth
-	docker build -t customers -f ./customers/Dockerfile.customers.dev ./customers
+	docker build -t customers -f ./customers-microservice/Dockerfile.dev ./customers-microservice
 	docker tag customers us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/customers
 	docker push us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/customers
 	docker build -t greetings -f ./greetings/Dockerfile.greetings.dev ./greetings
@@ -25,7 +25,7 @@ update-dev-images:
 	docker build -t images -f ./images/Dockerfile.images.dev ./images
 	docker tag images us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/images
 	docker push us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/images
-	docker build -t server -f ./server/Dockerfile.server.dev ./server
+	docker build -t server -f ./nest-server/Dockerfile.dev ./nest-server
 	docker tag server us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/server
 	docker push us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/server
 	docker build -t client -f ./client/Dockerfile.client.dev ./client

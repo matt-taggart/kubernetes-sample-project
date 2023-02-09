@@ -12,6 +12,7 @@ export class AppController {
 
   @MessagePattern({ cmd: 'register' })
   registerUser(registerUserDto: RegisterUserDto) {
+    console.log('got to microservice');
     return this.appService.registerUser(registerUserDto);
   }
 

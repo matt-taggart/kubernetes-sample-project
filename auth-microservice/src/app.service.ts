@@ -1,12 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
-import jwt from 'jsonwebtoken';
+import * as jwt from 'jsonwebtoken';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { Customer, CustomerDocument } from './schemas/customer.schema';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { LogoutUserDto } from './dto/logout-user.dto';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class AppService {
@@ -48,12 +49,20 @@ export class AppService {
       );
 
       return {
-        customer,
+        customer: {
+          id: customer._id,
+          email: customer.email,
+          fullName: customer.fullName,
+        },
         accessToken,
         refreshToken,
       };
     } catch (error) {
-      throw error;
+      throw new RpcException(
+        new BadRequestException(error.message, {
+          cause: new Error(),
+        }),
+      );
     }
   }
 
@@ -69,6 +78,7 @@ export class AppService {
         throw new Error('User does not exist');
       }
 
+      // @ts-ignore
       const isValidPassword = await this.customerModel.comparePasswords(
         loginUserDto.password,
       );
@@ -93,12 +103,20 @@ export class AppService {
       );
 
       return {
-        customer,
+        customer: {
+          id,
+          fullName: customer.fullName,
+          email: customer.email,
+        },
         accessToken,
         refreshToken,
       };
     } catch (error) {
-      throw error;
+      throw new RpcException(
+        new BadRequestException(error.message, {
+          cause: new Error(),
+        }),
+      );
     }
   }
 
@@ -117,7 +135,7 @@ export class AppService {
       });
 
       await this.customerModel.findOneAndUpdate(
-        { _id: mongoose.Types.ObjectId(id) },
+        { _id: new mongoose.Types.ObjectId(id as string) },
         { accessToken, refreshToken },
       );
 
@@ -126,7 +144,11 @@ export class AppService {
         refreshToken,
       };
     } catch (error) {
-      throw error;
+      throw new RpcException(
+        new BadRequestException(error.message, {
+          cause: new Error(),
+        }),
+      );
     }
   }
 
@@ -137,11 +159,15 @@ export class AppService {
         process.env.REFRESH_TOKEN_SECRET,
       );
       return await this.customerModel.findOneAndUpdate(
-        { _id: mongoose.Types.ObjectId(id) },
+        { _id: new mongoose.Types.ObjectId(id as string) },
         { accessToken: undefined, refreshToken: undefined },
       );
     } catch (error) {
-      throw error;
+      throw new RpcException(
+        new BadRequestException(error.message, {
+          cause: new Error(),
+        }),
+      );
     }
   }
 }

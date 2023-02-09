@@ -7,6 +7,6 @@ export class CustomersService {
     @Inject('CUSTOMERS_MICROSERVICE') private readonly client: ClientProxy,
   ) {}
   getCustomer(refreshToken: string) {
-    return this.client.send({ cmd: 'fetch' }, refreshToken);
+    return this.client.send({ cmd: 'get-user' }, refreshToken);
   }
 }

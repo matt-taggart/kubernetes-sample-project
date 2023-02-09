@@ -10,7 +10,7 @@ import { GreetingsController } from './greetings.controller';
         name: 'GREETINGS_MICROSERVICE',
         transport: Transport.REDIS,
         options: {
-          host: 'localhost',
+          host: 'redis-cluster-ip-service',
           port: 6379,
         },
       },

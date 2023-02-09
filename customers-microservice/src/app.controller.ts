@@ -6,11 +6,8 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-  @MessagePattern({ cmd: 'register' })
+  @MessagePattern({ cmd: 'get-user' })
   registerUser(data: number[]): number {
-    return (data || []).reduce((a, b) => a + b);
-  }
-  getHello(): string {
-    return this.appService.getHello();
+    return this.appService.registerUser();
   }
 }

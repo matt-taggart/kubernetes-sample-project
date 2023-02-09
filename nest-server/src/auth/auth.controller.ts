@@ -1,30 +1,48 @@
-import { Controller, Post, Body, Delete, Req } from '@nestjs/common';
-import { Request } from 'express';
+import { Controller, Post, Body, Delete, Req, Res } from '@nestjs/common';
+import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 
-@Controller('v1')
+@Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  registerUser(@Body() registerUserDto: RegisterUserDto) {
-    return this.authService.registerUser(registerUserDto);
+  registerUser(
+    @Body() registerUserDto: RegisterUserDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    return this.authService.registerUser(registerUserDto, response);
   }
 
   @Post('login')
-  loginUser(@Body() loginUserDto: LoginUserDto) {
-    return this.authService.loginUser(loginUserDto);
+  loginUser(
+    @Body() loginUserDto: LoginUserDto,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    return this.authService.loginUser(loginUserDto, response);
   }
 
   @Post('refresh-token')
-  refreshToken(@Req() request: Request) {
-    return this.authService.refreshToken(request.cookies['cc_auth']);
+  refreshToken(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    return this.authService.refreshToken(
+      { refreshToken: request.cookies['cc_auth'] },
+      response,
+    );
   }
 
   @Delete('logout')
-  logoutUser(@Req() request: Request) {
-    return this.authService.logoutUser(request.cookies['cc_auth']);
+  logoutUser(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    return this.authService.logoutUser(
+      { refreshToken: request.cookies['cc_auth'] },
+      response,
+    );
   }
 }

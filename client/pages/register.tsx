@@ -35,6 +35,7 @@ export default function Register() {
       setLoading(false);
       router.push("/");
     } catch (error) {
+    console.log("%cerror", "color:cyan; ", error);
       setLoading(false);
       setServerError("Username already exists");
     }

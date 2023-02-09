@@ -10,12 +10,11 @@ import { ImagesController } from './images.controller';
         name: 'IMAGES_MICROSERVICE',
         transport: Transport.REDIS,
         options: {
-          host: 'localhost',
+          host: 'redis-cluster-ip-service',
           port: 6379,
         },
       },
     ]),
-    ,
   ],
   controllers: [ImagesController],
   providers: [ImagesService],

@@ -13,65 +13,65 @@ docker_build(
 
 docker_build(
     'us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/server',
-    context='./server',
-    dockerfile='./server/Dockerfile.server.dev',
+    context='./nest-server',
+    dockerfile='./nest-server/Dockerfile.dev',
     live_update=[
-        sync('./server', '/app'),
+        sync('./nest-server', '/app'),
         run(
             'pnpm install',
-            trigger=['./server/package.json']
+            trigger=['./nest-server/package.json']
         )
     ]
 )
 
 docker_build(
     'us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/customers',
-    context='./customers',
-    dockerfile='./customers/Dockerfile.customers.dev',
+    context='./customers-microservice',
+    dockerfile='./customers-microservice/Dockerfile.dev',
     live_update=[
-        sync('./customers', '/app'),
+        sync('./customers-microservice', '/app'),
         run(
             'pnpm install',
-            trigger=['./customers/package.json']
+            trigger=['./customers-microservice/package.json']
         )
     ]
 )
 
 docker_build(
     'us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/auth',
-    context='./auth',
-    dockerfile='./auth/Dockerfile.auth.dev',
+    context='./auth-microservice',
+    dockerfile='./auth-microservice/Dockerfile.dev',
     live_update=[
-        sync('./auth', '/app'),
+        sync('./auth-microservice', '/app'),
         run(
             'pnpm install',
-            trigger=['./auth/package.json']
+            trigger=['./auth-microservice/package.json']
         )
     ]
 )
 
 docker_build(
     'us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/greetings',
-    context='./greetings',
-    dockerfile='./greetings/Dockerfile.greetings.dev',
+    context='./greetings-microservice',
+    dockerfile='./greetings-microservice/Dockerfile.dev',
     live_update=[
-        sync('./greetings', '/app'),
+        sync('./greetings-microservice', '/app'),
         run(
             'pnpm install',
-            trigger=['./greetings/package.json']
+            trigger=['./greetings-microservice/package.json']
         )
     ]
 )
 
 docker_build(
     'us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/images',
-    context='./images',
-    dockerfile='./images/Dockerfile.images.dev',
+    context='./images-microservice',
+    dockerfile='./images-microservice/Dockerfile.dev',
     live_update=[
-        sync('./images', '/app'),
+        sync('./images-microservice', '/app'),
         run(
             'pnpm install',
-            trigger=['./images/package.json']
+            trigger=['./images-microservice/package.json']
         )
     ]
 )

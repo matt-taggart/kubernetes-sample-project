@@ -10,7 +10,7 @@ import { AuthController } from './auth.controller';
         name: 'AUTH_MICROSERVICE',
         transport: Transport.REDIS,
         options: {
-          host: 'localhost',
+          host: 'redis-cluster-ip-service',
           port: 6379,
         },
       },
