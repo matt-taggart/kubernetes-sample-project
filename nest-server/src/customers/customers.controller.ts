@@ -1,6 +1,6 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
-import { Request } from 'express';
 import { AuthGuard } from 'src/auth.guard';
+import { AuthenticatedRequest } from 'src/types';
 import { CustomersService } from './customers.service';
 
 @Controller('customers')
@@ -9,7 +9,7 @@ export class CustomersController {
 
   @Get()
   @UseGuards(new AuthGuard())
-  getCustomer(@Req() request: Request) {
-    return this.customersService.getCustomer(request.cookies['cc_auth']);
+  getCustomer(@Req() request: AuthenticatedRequest) {
+    return this.customersService.getCustomer({ userId: request.userId });
   }
 }
