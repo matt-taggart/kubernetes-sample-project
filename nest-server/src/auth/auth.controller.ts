@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Delete, Req, Res } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Delete,
+  Req,
+  Res,
+  HttpCode,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -36,6 +44,7 @@ export class AuthController {
   }
 
   @Delete('logout')
+  @HttpCode(204)
   logoutUser(
     @Req() request: Request,
     @Res({ passthrough: true }) response: Response,

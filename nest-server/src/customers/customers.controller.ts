@@ -3,7 +3,7 @@ import { Request } from 'express';
 import { AuthGuard } from 'src/auth.guard';
 import { CustomersService } from './customers.service';
 
-@Controller('v1/customers')
+@Controller('customers')
 export class CustomersController {
   constructor(private readonly customersService: CustomersService) {}
 

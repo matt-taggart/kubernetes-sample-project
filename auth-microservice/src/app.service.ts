@@ -78,8 +78,7 @@ export class AppService {
         throw new Error('User does not exist');
       }
 
-      // @ts-ignore
-      const isValidPassword = await this.customerModel.comparePasswords(
+      const isValidPassword = await customer.comparePasswords(
         loginUserDto.password,
       );
 
@@ -122,10 +121,12 @@ export class AppService {
 
   async refreshToken(refreshTokenDto: RefreshTokenDto) {
     try {
-      const id = jwt.verify(
+      const decoded = jwt.verify(
         refreshTokenDto.refreshToken,
         process.env.REFRESH_TOKEN_SECRET,
       );
+      const id = (decoded as { id: string }).id;
+
       const accessToken = jwt.sign({ id }, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: '30m',
       });
@@ -154,10 +155,12 @@ export class AppService {
 
   async logoutUser(logoutUserDto: LogoutUserDto) {
     try {
-      const id = jwt.verify(
+      const decoded = jwt.verify(
         logoutUserDto.refreshToken,
         process.env.REFRESH_TOKEN_SECRET,
       );
+
+      const id = (decoded as { id: string }).id;
       return await this.customerModel.findOneAndUpdate(
         { _id: new mongoose.Types.ObjectId(id as string) },
         { accessToken: undefined, refreshToken: undefined },

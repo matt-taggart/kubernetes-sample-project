@@ -14,16 +14,16 @@ export class AuthGuard implements CanActivate {
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
-    console.log('%crequest', 'color:cyan; ', request);
 
     const authHeader = request.headers['Authorization'];
+    console.log('%cauthHeader', 'color:cyan; ', authHeader);
     if (!authHeader) {
       throw new UnauthorizedException();
     }
 
     try {
       const accessToken = authHeader.split(' ')[1];
-      const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+      const decoded = jwt.verify(accessToken, process.env.AC4CESS_TOKEN_SECRET);
       console.log('%cdecoded', 'color:cyan; ', decoded);
       // @ts-ignore
       request.state.userId = decoded.id;

@@ -26,15 +26,6 @@ import { Customer, CustomerSchema } from './schemas/customer.schema';
             }
           });
 
-          schema.methods.comparePasswords = async function (password: string) {
-            try {
-              const isValid = await bcrypt.compare(password, this.password);
-              return isValid;
-            } catch (error) {
-              return false;
-            }
-          };
-
           return schema;
         },
       },
