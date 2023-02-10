@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument, ObjectId } from 'mongoose';
+import { Greeting } from 'src/dto/update-customer.dto';
 
 export type CustomerDocument = HydratedDocument<Customer>;
 
@@ -22,6 +23,9 @@ export class Customer {
 
   @Prop()
   refreshToken: string;
+
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Greeting' }] })
+  greetings: Greeting[];
 }
 
 export const CustomerSchema = SchemaFactory.createForClass(Customer);

@@ -22,7 +22,7 @@ export const checkAuthRoute = async (context) => {
         withCredentials: true,
       });
 
-      if (!customerData.customer) {
+      if (!customerData) {
         return {
           redirect: {
             permanent: false,
@@ -34,7 +34,7 @@ export const checkAuthRoute = async (context) => {
       return {
         props: {
           accessToken: tokenData.accessToken,
-          customer: customerData.customer,
+          customer: customerData,
         },
       };
     } catch (error) {
@@ -46,6 +46,7 @@ export const checkAuthRoute = async (context) => {
       };
     }
   } catch (error) {
+    console.log("%cerror", "color:cyan; ", error);
     return {
       redirect: {
         permanent: false,

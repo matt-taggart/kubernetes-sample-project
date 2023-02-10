@@ -1,5 +1,5 @@
 export class Greeting {
-  id: string;
+  _id: string;
   prompt: string;
   generatedText: string;
 }

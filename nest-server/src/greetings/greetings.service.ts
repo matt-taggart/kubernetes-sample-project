@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { CreateGreetingDto } from './dto/create-greeting.dto';
+import { catchError, map, of } from 'rxjs';
+import { DeleteGreetingDto } from './dto/delete-greeting.dto';
+import { GetGreetingsDto } from './dto/get-greetings.dto';
 
 @Injectable()
 export class GreetingsService {
@@ -8,15 +10,29 @@ export class GreetingsService {
     @Inject('GREETINGS_MICROSERVICE') private readonly client: ClientProxy,
   ) {}
 
-  create(createGreetingDto: CreateGreetingDto) {
-    return this.client.send({ cmd: 'create' }, createGreetingDto);
+  createGreeting({ userId, prompt }) {
+    return this.client
+      .send({ cmd: 'create-greeting' }, { userId, prompt })
+      .pipe(
+        catchError((error) => {
+          return of(error.response);
+        }),
+      );
   }
 
-  findAll() {
-    return this.client.send({ cmd: 'findAll' }, null);
+  getGreetings(getGreetingsDto: GetGreetingsDto) {
+    return this.client.send({ cmd: 'get-greetings' }, getGreetingsDto).pipe(
+      catchError((error) => {
+        return of(error.response);
+      }),
+    );
   }
 
-  remove(id: string) {
-    return this.client.send({ cmd: 'remove' }, id);
+  removeGreeting(deleteGreetingDto: DeleteGreetingDto) {
+    return this.client.send({ cmd: 'delete-greeting' }, deleteGreetingDto).pipe(
+      catchError((error) => {
+        return of(error.response);
+      }),
+    );
   }
 }
