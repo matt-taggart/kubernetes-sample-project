@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useLayoutEffect, useRef } from "react";
+import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import clsx from "clsx";
 // import { Trash2 } from "lucide-react";
@@ -6,7 +6,6 @@ import { useForm } from "react-hook-form";
 import { format, parseISO } from "date-fns";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import * as Toast from "@radix-ui/react-toast";
-import { useWindowVirtualizer } from "@tanstack/react-virtual";
 
 import AppLayout from "../components/AppLayout";
 import { checkAuthRoute } from "../middleware/checkAuthRoute";
@@ -24,29 +23,6 @@ export default function Images({ accessToken }) {
   const [greetingIdToDelete, setGreetingIdToDelete] = useState(null);
   const [open, setOpen] = useState(false);
   const [nsfwContentMessage, setNsfwContentMessage] = useState("");
-
-  const parentRef = useRef<HTMLDivElement>(null);
-
-  const parentOffsetRef = useRef(0);
-
-  useLayoutEffect(() => {
-    parentOffsetRef.current = parentRef.current?.offsetTop ?? 0;
-  }, []);
-
-  const virtualizer = useWindowVirtualizer({
-    count: images.length,
-    estimateSize: () => 512,
-    scrollMargin: parentOffsetRef.current,
-  });
-  const items = virtualizer.getVirtualItems();
-  console.log("%citems", "color:cyan; ", items);
-
-  const arr = [];
-  for (let i = 0; i < items.length; i++) {
-    if (i % 3) {
-      arr.push(items[i]);
-    }
-  }
 
   const {
     register,
@@ -362,42 +338,12 @@ export default function Images({ accessToken }) {
           </div>
         ) : null}
 
-        <div className="mx-auto p-2" ref={parentRef}>
-          <div
-            style={{
-              height: virtualizer.getTotalSize(),
-              width: "100%",
-              position: "relative",
-            }}
-          >
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
-                transform: `translateY(${
-                  items[0]?.start - virtualizer.options.scrollMargin
-                }px)`,
-              }}
-            >
-              {items.map((virtualRow) => {
-                const image = images[virtualRow.index];
-                return (
-                  <div
-                    key={virtualRow.key}
-                    data-index={virtualRow.index}
-                    ref={virtualizer.measureElement}
-                    className={
-                      virtualRow.index % 2 ? "ListItemOdd" : "ListItemEven"
-                    }
-                  >
-                    <ImageCard {...image} jumpImageId={jumpImageId} />
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+        <div className="mx-auto p-2 grid">
+          {images.map((image) => {
+            return (
+              <ImageCard key={image.id} {...image} jumpImageId={jumpImageId} />
+            );
+          })}
         </div>
 
         <AlertDialog.Portal>
@@ -491,7 +437,7 @@ const ImageCard = ({ id, photoUrl, createdAt, prompt, jumpImageId }) => {
     <div
       id={id}
       key={id}
-      style={{ width: 512, height: 512, borderWidth: "2.5px" }}
+      style={{ borderWidth: "2.5px" }}
       className={clsx(
         "flex flex-col bg-white dark:bg-gray-800 mb-12 rounded overflow-hidden",
         {
