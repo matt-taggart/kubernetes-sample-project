@@ -67,7 +67,15 @@ export class AppService {
           userId: new mongoose.Types.ObjectId(getGreetingsDto.userId),
         });
 
-        return { greetings };
+        return {
+          greetings: greetings.map((greeting) => ({
+            id: greeting._id,
+            prompt: greeting.prompt,
+            generatedText: greeting.generatedText,
+            createdAt: greeting.createdAt,
+            updatedAt: greeting.updatedAt,
+          })),
+        };
       } catch (error) {
         throw error;
       }
