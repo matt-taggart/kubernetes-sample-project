@@ -7,6 +7,7 @@ import {
   Delete,
   UseGuards,
   Req,
+  HttpCode,
 } from '@nestjs/common';
 import { GreetingsService } from './greetings.service';
 import { CreateGreetingDto } from './dto/create-greeting.dto';
@@ -35,7 +36,8 @@ export class GreetingsController {
     return this.greetingsService.getGreetings({ userId: request.userId });
   }
 
-  @Delete()
+  @Delete(':id')
+  @HttpCode(204)
   @UseGuards(new AuthGuard())
   removeGreeting(@Param('id') id: string) {
     return this.greetingsService.removeGreeting({ id });
