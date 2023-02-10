@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import axios from 'axios';
@@ -8,6 +8,7 @@ import { Image, ImageDocument } from './schema/image.schema';
 import { CreateImageDto } from './dto/create-image.dto';
 import { GetImagesDto } from './dto/get-images.dto';
 import { SaveImageDto } from './dto/save-image.dto';
+import { RpcException } from '@nestjs/microservices';
 
 const BUCKET_NAME = 'card_couture';
 
@@ -31,7 +32,7 @@ export class AppService {
           input: {
             prompt: createImageDto.prompt,
           },
-          webhook: 'https://c2d3-174-67-184-138.ngrok.io/images/webhook',
+          webhook: 'http://67f5-70-190-230-170.ngrok.io/images/webhook',
         },
         headers: {
           Authorization: `Bearer ${process.env.RUNPOD_API_KEY.trim()}`,
@@ -53,15 +54,13 @@ export class AppService {
         userId: new mongoose.Types.ObjectId(createImageDto.userId),
       });
 
-      return {
-        id: response._id,
-        status: response.status,
-        generatedId: response.generatedId,
-        createdAt: response.createdAt,
-        userId: createImageDto.userId,
-      };
+      return response;
     } catch (error) {
-      throw error;
+      throw new RpcException(
+        new BadRequestException(error.message, {
+          cause: new Error(),
+        }),
+      );
     }
   }
 
@@ -132,7 +131,11 @@ export class AppService {
 
       return { images, pendingImages: parsedPendingImages };
     } catch (error) {
-      throw error;
+      throw new RpcException(
+        new BadRequestException(error.message, {
+          cause: new Error(),
+        }),
+      );
     }
   }
 
@@ -165,7 +168,11 @@ export class AppService {
 
       return { message: 'success' };
     } catch (error) {
-      throw error;
+      throw new RpcException(
+        new BadRequestException(error.message, {
+          cause: new Error(),
+        }),
+      );
     }
   }
 }

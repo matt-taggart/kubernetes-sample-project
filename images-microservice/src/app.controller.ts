@@ -11,16 +11,16 @@ export class AppController {
 
   @MessagePattern({ cmd: 'create-image' })
   createImage(createImageDto: CreateImageDto) {
-    this.appService.createImage(createImageDto);
+    return this.appService.createImage(createImageDto);
   }
 
   @MessagePattern({ cmd: 'get-images' })
   getImages(getImagesDto: GetImagesDto) {
-    this.appService.getImages(getImagesDto);
+    return this.appService.getImages(getImagesDto);
   }
 
   @MessagePattern({ cmd: 'save-image' })
   saveImage(saveImageDto: SaveImageDto) {
-    this.appService.saveImage(saveImageDto);
+    return this.appService.saveImage(saveImageDto);
   }
 }

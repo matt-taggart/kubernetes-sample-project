@@ -21,7 +21,7 @@ export class ImagesController {
 
   @Post('webhook')
   webhook(@Req() request: AuthenticatedRequest) {
-    const parsedBody = JSON.parse(request.rawBody);
+    const parsedBody = request.body;
     const generatedId = parsedBody.id;
     const image = parsedBody.output[0].image;
     const status = parsedBody.status;
