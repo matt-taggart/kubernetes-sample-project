@@ -266,7 +266,7 @@ router.post("/images", verifyJwt, async (ctx) => {
   } catch (error) {
     ctx.throw(400);
   }
-});
+});6
 
 router.get("/images", verifyJwt, async (ctx) => {
   try {

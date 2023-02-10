@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { CreateImageDto } from './dto/create-image.dto';
+import { GetImagesDto } from './dto/get-images.dto';
 
 @Injectable()
 export class ImagesService {
@@ -8,15 +9,18 @@ export class ImagesService {
     @Inject('IMAGES_MICROSERVICE') private readonly client: ClientProxy,
   ) {}
 
-  create(createImageDto: CreateImageDto) {
-    return this.client.send({ cmd: 'create' }, createImageDto);
+  createImage(createImageDto: CreateImageDto, { userId }) {
+    return this.client.send(
+      { cmd: 'create-image' },
+      { ...createImageDto, userId },
+    );
   }
 
-  webhook(webhookPayload: any) {
-    return this.client.send({ cmd: 'create' }, webhookPayload);
+  saveImage(webhookPayload: any) {
+    return this.client.send({ cmd: 'save-image' }, webhookPayload);
   }
 
-  findAll() {
-    return this.client.send({ cmd: 'findAll' }, null);
+  getImages(getImagesDto: GetImagesDto) {
+    return this.client.send({ cmd: 'get-images' }, getImagesDto);
   }
 }

@@ -1,23 +1,41 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
 import { ImagesService } from './images.service';
 import { CreateImageDto } from './dto/create-image.dto';
+import { AuthGuard } from 'src/auth.guard';
+import { AuthenticatedRequest } from 'src/types';
 
-@Controller('v1/images')
+@Controller('images')
 export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
 
   @Post()
-  create(@Body() createImageDto: CreateImageDto) {
-    return this.imagesService.create(createImageDto);
+  @UseGuards(new AuthGuard())
+  createImage(
+    @Body() createImageDto: CreateImageDto,
+    @Req() request: AuthenticatedRequest,
+  ) {
+    return this.imagesService.createImage(createImageDto, {
+      userId: request.userId,
+    });
   }
 
   @Post('webhook')
-  webhook(@Body() webhookPayload: any) {
-    return this.imagesService.webhook(webhookPayload);
+  webhook(@Req() request: AuthenticatedRequest) {
+    const parsedBody = JSON.parse(request.rawBody);
+    const generatedId = parsedBody.id;
+    const image = parsedBody.output[0].image;
+    const status = parsedBody.status;
+
+    return this.imagesService.saveImage({
+      generatedId,
+      image,
+      status,
+    });
   }
 
   @Get()
-  findAll() {
-    return this.imagesService.findAll();
+  @UseGuards(new AuthGuard())
+  getImages(@Req() request: AuthenticatedRequest) {
+    return this.imagesService.getImages({ userId: request.userId });
   }
 }

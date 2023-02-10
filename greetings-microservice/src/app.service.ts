@@ -2,7 +2,6 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
-import { of } from 'rxjs';
 import { Configuration, OpenAIApi } from 'openai';
 import { CreateGreetingDto } from './dto/create-greeting.dto';
 import { DeleteGreetingDto } from './dto/delete-greeting.dto';
