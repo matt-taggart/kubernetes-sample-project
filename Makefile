@@ -19,15 +19,15 @@ update-dev-images:
 	docker build -t customers -f ./customers-microservice/Dockerfile.dev ./customers-microservice
 	docker tag customers us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/customers
 	docker push us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/customers
-	docker build -t greetings -f ./greetings/Dockerfile.greetings.dev ./greetings
+	docker build -t greetings -f ./greetings/Dockerfile.dev ./greetings-microservice
 	docker tag greetings us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/greetings
 	docker push us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/greetings
-	docker build -t images -f ./images/Dockerfile.images.dev ./images
+	docker build -t images -f ./images/Dockerfile.dev ./images-microservice
 	docker tag images us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/images
 	docker push us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/images
 	docker build -t server -f ./nest-server/Dockerfile.dev ./nest-server
 	docker tag server us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/server
 	docker push us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/server
-	docker build -t client -f ./client/Dockerfile.client.dev ./client
+	docker build -t client -f ./client/Dockerfile.dev ./client
 	docker tag client us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/client
 	docker push us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/client

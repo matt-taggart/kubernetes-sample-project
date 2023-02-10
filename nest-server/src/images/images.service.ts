@@ -15,7 +15,6 @@ export class ImagesService {
       .send({ cmd: 'create-image' }, { ...createImageDto, userId })
       .pipe(
         catchError((error) => {
-          console.log('%cerror', 'color:cyan; ', error);
           return of(error.response);
         }),
       );
