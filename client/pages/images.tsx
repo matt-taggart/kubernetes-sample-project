@@ -385,7 +385,7 @@ export default function Images({ accessToken }) {
                         height={height}
                         isScrolling={isScrolling}
                         onScroll={onChildScroll}
-                        overscanRowCount={0}
+                        overscanRowCount={2}
                         rowCount={rowCount}
                         rowHeight={cache.rowHeight}
                         scrollTop={scrollTop}
