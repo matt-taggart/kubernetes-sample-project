@@ -13,8 +13,8 @@ import {
   User,
   LogOut,
 } from "lucide-react";
-import { GreetingCardSVG } from "./GreetingCardSVG";
 import { FancyGreetingCard } from "./FancyGreetingCard";
+import { GriffinSVG } from "./GriffinSVG";
 
 export default function AppLayout({ children }) {
   const router = useRouter();
@@ -44,11 +44,13 @@ export default function AppLayout({ children }) {
         <div className="h-full overflow-y-auto scrollbars">
           <div className="mh-18 text-center py-5">
             <a href="#" className="relative">
-              <h2 className="flex text-2xl font-semibold text-gray-200 px-4 max-h-9">
-                <GreetingCardSVG />
-                <span className="text-gray-700 dark:text-gray-200">
-                  Card Couture
-                </span>
+              <h2 className="flex text-2xl font-semibold text-gray-200 px-8 max-h-9">
+                <div className="flex justify-center align-baseline">
+                  <span className="text-gray-700 dark:text-gray-200">
+                    Griffin
+                  </span>
+                  <GriffinSVG />
+                </div>
               </h2>
               <h2 className="text-3xl font-semibold mx-auto logo-compact hidden">
                 <svg
@@ -229,7 +231,10 @@ export default function AppLayout({ children }) {
                   </NuxtLink>
                 </DropdownMenu.Item>
                 <DropdownMenu.Item className="DropdownMenuItem">
-                  <button onClick={logout} className="block hover:text-indigo-500">
+                  <button
+                    onClick={logout}
+                    className="block hover:text-indigo-500"
+                  >
                     <LogOut className="inline-block h-4 w-4 mr-1" />
                     <span className="p-1">Logout</span>
                   </button>

@@ -16,7 +16,7 @@ export default function AuthLayout({ children }) {
           borderBottom: "1px solid rgba(5, 5, 5, 0.06)",
         }}
       >
-        Card Couture
+        Griffin
       </div>
       <main>{children}</main>
     </>
