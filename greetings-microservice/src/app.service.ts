@@ -67,13 +67,20 @@ export class AppService {
         });
 
         return {
-          greetings: greetings.map((greeting) => ({
-            id: greeting._id,
-            prompt: greeting.prompt,
-            generatedText: greeting.generatedText,
-            createdAt: greeting.createdAt,
-            updatedAt: greeting.updatedAt,
-          })),
+          greetings: [...greetings]
+            .sort((a, b) => {
+              const dateA = new Date(a.createdAt).getTime();
+              const dateB = new Date(b.createdAt).getTime();
+
+              return dateB - dateA;
+            })
+            .map((greeting) => ({
+              id: greeting._id,
+              prompt: greeting.prompt,
+              generatedText: greeting.generatedText,
+              createdAt: greeting.createdAt,
+              updatedAt: greeting.updatedAt,
+            })),
         };
       } catch (error) {
         throw error;
