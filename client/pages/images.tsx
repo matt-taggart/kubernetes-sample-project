@@ -1,4 +1,11 @@
-import { useEffect, useState, useMemo, useRef, forwardRef } from "react";
+import {
+  useEffect,
+  useState,
+  useMemo,
+  useRef,
+  forwardRef,
+  cloneElement,
+} from "react";
 import axios from "axios";
 import clsx from "clsx";
 // import { Trash2 } from "lucide-react";
@@ -367,6 +374,10 @@ export default function Images({ accessToken }) {
             <div>
               <AutoSizer disableHeight>
                 {({ width }) => {
+                  const ITEMS_COUNT = images.length;
+                  const ITEM_SIZE = 350;
+                  const itemsPerRow = Math.floor(width / ITEM_SIZE);
+                  const rowCount = Math.ceil(ITEMS_COUNT / itemsPerRow);
                   return (
                     <div className="mx-auto p-2" ref={registerChild}>
                       <List
@@ -375,7 +386,7 @@ export default function Images({ accessToken }) {
                         isScrolling={isScrolling}
                         onScroll={onChildScroll}
                         overscanRowCount={3}
-                        rowCount={images.length}
+                        rowCount={rowCount}
                         rowHeight={cache.rowHeight}
                         scrollTop={scrollTop}
                         width={width}
@@ -389,7 +400,23 @@ export default function Images({ accessToken }) {
                           key,
                           style,
                         }) => {
-                          const image = images[index];
+                          const items = [];
+                          const fromIndex = index * itemsPerRow;
+                          const toIndex = Math.min(
+                            fromIndex + itemsPerRow,
+                            ITEMS_COUNT
+                          );
+
+                          for (let i = fromIndex; i < toIndex; i++) {
+                            items.push(
+                              <ImageCard
+                                key={i}
+                                {...images[i]}
+                                jumpImageId={jumpImageId}
+                              />
+                            );
+                          }
+
                           return (
                             images.length && (
                               <CellMeasurer
@@ -399,16 +426,24 @@ export default function Images({ accessToken }) {
                                 rowIndex={index}
                                 parent={parent}
                               >
-                                {({ measure, registerChild }) => (
-                                  <ImageCard
-                                    key={key}
-                                    ref={registerChild}
-                                    style={style}
-                                    measure={measure}
-                                    {...image}
-                                    jumpImageId={jumpImageId}
-                                  />
-                                )}
+                                {({ measure, registerChild }) => {
+                                  return (
+                                    <div
+                                      className="flex"
+                                      key={key}
+                                      ref={registerChild}
+                                      style={style}
+                                    >
+                                      {items.map((item) => (
+                                        <>
+                                          {cloneElement(item, {
+                                            measure,
+                                          })}
+                                        </>
+                                      ))}
+                                    </div>
+                                  );
+                                }}
                               </CellMeasurer>
                             )
                           );
@@ -508,67 +543,72 @@ export default function Images({ accessToken }) {
   );
 }
 
-const ImageCard = forwardRef(
-  ({ id, photoUrl, createdAt, prompt, jumpImageId, style, measure }, ref) => {
-    return (
-      <div
-        id={id}
-        key={id}
-        ref={ref}
-        style={{ ...style, maxWidth: "350px", borderWidth: "2.5px" }}
-        className={clsx(
-          "flex flex-col bg-white dark:bg-gray-800 mb-12 rounded overflow-hidden",
-          {
-            border: id === jumpImageId,
-            "border-indigo-500": id === jumpImageId,
-            shadow: id === jumpImageId,
-          }
-        )}
-      >
-        <div className="relative overflow-hidden">
-          <a href="#">
-            <div className="absolute inset-0 hover:bg-white opacity-0 transition duration-700 hover:opacity-10"></div>
-            <img
-              className="w-full"
-              src={photoUrl}
-              onLoad={measure}
-              alt="alt title"
-            />
-          </a>
-        </div>
-        <div className="p-6 flex-1">
-          <div className="mb-2">
-            <div className="flex align-center text-gray-500">
-              <div className="mr-2">
-                <svg
-                  className="bi bi-calendar mr-2 inline-block"
-                  width=".8rem"
-                  height=".8rem"
-                  viewBox="0 0 16 16"
-                  fill="currentColor"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M14 0H2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V2a2 2 0 00-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"
-                    clip-rule="evenodd"
-                  ></path>
-                  <path
-                    fillRule="evenodd"
-                    d="M6.5 7a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm-9 3a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm-9 3a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2z"
-                    clip-rule="evenodd"
-                  ></path>
-                </svg>
-              </div>
-              <span>{format(parseISO(createdAt), "MMM d, y h:mm aaa")}</span>
-            </div>
-          </div>
-          <p>{prompt}</p>
-        </div>
+const ImageCard = ({
+  id,
+  photoUrl,
+  createdAt,
+  prompt,
+  jumpImageId,
+  measure,
+}) => {
+  return (
+    <div
+      id={id}
+      style={{ maxWidth: "350px", borderWidth: "2.5px" }}
+      className={clsx(
+        "flex flex-col bg-white dark:bg-gray-800 mb-12 rounded overflow-hidden",
+        {
+          border: id === jumpImageId,
+          "border-indigo-500": id === jumpImageId,
+          shadow: id === jumpImageId,
+        }
+      )}
+    >
+      <div className="relative overflow-hidden">
+        <a href="#">
+          <div className="absolute inset-0 hover:bg-white opacity-0 transition duration-700 hover:opacity-10"></div>
+          <img
+            className="w-full"
+            src={photoUrl}
+            alt="alt title"
+            onLoad={measure}
+          />
+        </a>
       </div>
-    );
-  }
-);
+      <div className="p-6 flex-1">
+        <div className="mb-2">
+          <div className="flex align-center text-gray-500">
+            <div className="mr-2">
+              <svg
+                className="bi bi-calendar mr-2 inline-block"
+                width=".8rem"
+                height=".8rem"
+                viewBox="0 0 16 16"
+                fill="currentColor"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M14 0H2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V2a2 2 0 00-2-2zM1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857V3.857z"
+                  clip-rule="evenodd"
+                ></path>
+                <path
+                  fillRule="evenodd"
+                  d="M6.5 7a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm-9 3a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm-9 3a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2zm3 0a1 1 0 100-2 1 1 0 000 2z"
+                  clip-rule="evenodd"
+                ></path>
+              </svg>
+            </div>
+            <span>{format(parseISO(createdAt), "MMM d, y h:mm aaa")}</span>
+          </div>
+        </div>
+        <p>{prompt}</p>
+      </div>
+    </div>
+  );
+};
+
+ImageCard.displayName = "ImageCard";
 
 export async function getServerSideProps(context) {
   return checkAuthRoute(context);
