@@ -375,7 +375,7 @@ export default function Images({ accessToken }) {
               <AutoSizer disableHeight>
                 {({ width }) => {
                   const ITEMS_COUNT = images.length;
-                  const ITEM_SIZE = width / 3;
+                  const ITEM_SIZE = 350;
                   const itemsPerRow = Math.floor(width / ITEM_SIZE);
                   const rowCount = Math.ceil(ITEMS_COUNT / itemsPerRow);
                   return (
@@ -432,7 +432,7 @@ export default function Images({ accessToken }) {
                                       className="flex px-6"
                                       key={key}
                                       ref={registerChild}
-                                      style={style}
+                                      style={{ ...style, gap: "1rem" }}
                                     >
                                       {items.map((item) => (
                                         <>
@@ -554,7 +554,7 @@ const ImageCard = ({
   return (
     <div
       id={id}
-      style={{ flex: 1,  borderWidth: "2.5px" }}
+      style={{ flex: 1, borderWidth: "2.5px" }}
       className={clsx(
         "flex flex-col bg-white dark:bg-gray-800 mb-12 rounded overflow-hidden",
         {
