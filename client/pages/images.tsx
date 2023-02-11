@@ -375,17 +375,17 @@ export default function Images({ accessToken }) {
               <AutoSizer disableHeight>
                 {({ width }) => {
                   const ITEMS_COUNT = images.length;
-                  const ITEM_SIZE = 350;
+                  const ITEM_SIZE = width / 3;
                   const itemsPerRow = Math.floor(width / ITEM_SIZE);
                   const rowCount = Math.ceil(ITEMS_COUNT / itemsPerRow);
                   return (
-                    <div className="mx-auto p-2" ref={registerChild}>
+                    <div className="mx-auto" ref={registerChild}>
                       <List
                         autoHeight
                         height={height}
                         isScrolling={isScrolling}
                         onScroll={onChildScroll}
-                        overscanRowCount={3}
+                        overscanRowCount={0}
                         rowCount={rowCount}
                         rowHeight={cache.rowHeight}
                         scrollTop={scrollTop}
@@ -429,7 +429,7 @@ export default function Images({ accessToken }) {
                                 {({ measure, registerChild }) => {
                                   return (
                                     <div
-                                      className="flex"
+                                      className="flex px-6"
                                       key={key}
                                       ref={registerChild}
                                       style={style}
@@ -554,7 +554,7 @@ const ImageCard = ({
   return (
     <div
       id={id}
-      style={{ maxWidth: "350px", borderWidth: "2.5px" }}
+      style={{ flex: 1,  borderWidth: "2.5px" }}
       className={clsx(
         "flex flex-col bg-white dark:bg-gray-800 mb-12 rounded overflow-hidden",
         {
