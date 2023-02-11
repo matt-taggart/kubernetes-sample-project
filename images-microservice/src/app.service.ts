@@ -32,7 +32,7 @@ export class AppService {
           input: {
             prompt: createImageDto.prompt,
           },
-          webhook: 'http://67f5-70-190-230-170.ngrok.io/images/webhook',
+          webhook: 'https://74ef-70-190-230-170.ngrok.io/images/webhook',
         },
         headers: {
           Authorization: `Bearer ${process.env.RUNPOD_API_KEY.trim()}`,

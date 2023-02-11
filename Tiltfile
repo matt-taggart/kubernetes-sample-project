@@ -1,7 +1,7 @@
 docker_build(
     'us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/client',
     context='./client',
-    dockerfile='./client/Dockerfile.client.dev',
+    dockerfile='./client/Dockerfile.dev',
     live_update=[
         sync('./client', '/app'),
         run(
