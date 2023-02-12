@@ -5,6 +5,7 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import clsx from "clsx";
 import AuthLayout from "../components/AuthLayout";
+import { GoogleIcon } from "../components/GoogleIcon";
 
 export default function Register() {
   const [loading, setLoading] = useState(false);
@@ -35,7 +36,6 @@ export default function Register() {
       setLoading(false);
       router.push("/");
     } catch (error) {
-    console.log("%cerror", "color:cyan; ", error);
       setLoading(false);
       setServerError("Username already exists");
     }
@@ -219,6 +219,20 @@ export default function Register() {
                       {serverError}
                     </div>
                   )}
+                  <div className="mt-3">
+                    <p className="text-center mb-3">
+                      <span>Or</span>
+                    </p>
+                    <div className="text-center mb-4 sm:space-x-4">
+                      <button
+                        type="button"
+                        className="flex align-center justify-center py-2 px-4 w-full inline-block text-center mb-3 rounded leading-5 text-indigo-500 bg-transparent border border-indigo-500 hover:text-gray-100 hover:bg-indigo-500 hover:ring-0 hover:border-indigo-500 focus:text-gray-100 focus:bg-indigo-500 focus:border-indigo-500 focus:outline-none focus:ring-0"
+                      >
+                        <GoogleIcon />{" "}
+                        <span className="ml-2">Join with Google</span>
+                      </button>
+                    </div>
+                  </div>
                   <div className="mt-3">
                     <p className="text-center mb-4">
                       Already have an account?{" "}
