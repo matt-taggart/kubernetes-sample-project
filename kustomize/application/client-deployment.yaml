@@ -17,3 +17,9 @@ spec:
           image: us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/client
           ports:
             - containerPort: 3000
+          env:
+            - name: NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: app-secrets
+                  key: NEXT_PUBLIC_GOOGLE_OAUTH_CLIENT_ID

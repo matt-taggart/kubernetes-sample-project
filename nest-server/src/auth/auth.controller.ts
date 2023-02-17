@@ -10,6 +10,7 @@ import {
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
+import { RegisterGoogleUserDto } from './dto/register-google-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 
 @Controller()
@@ -22,6 +23,16 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ) {
     return this.authService.registerUser(registerUserDto, response);
+  }
+
+  @Post('register/google')
+  registerGoogleUser(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    const accessToken = request.headers.authorization.slice(7).trim();
+    console.log('%caccesssToken', 'color:cyan; ', accessToken);
+    return this.authService.registerGoogleUser({ accessToken }, response);
   }
 
   @Post('login')

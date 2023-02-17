@@ -5,6 +5,7 @@ import { catchError, map, of } from 'rxjs';
 import { LoginUserDto } from './dto/login-user.dto';
 import { LogoutUserDto } from './dto/logout-user.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { RegisterGoogleUserDto } from './dto/register-google-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { setRefreshTokenCookie } from './utils/cookie.utils';
 
@@ -25,6 +26,24 @@ export class AuthService {
         return of(error.response);
       }),
     );
+  }
+
+  registerGoogleUser(
+    registerGoogleUserDto: RegisterGoogleUserDto,
+    response: Response,
+  ) {
+    return this.client
+      .send({ cmd: 'register-google' }, registerGoogleUserDto)
+      .pipe(
+        map((data) => {
+          setRefreshTokenCookie(response, data.refreshToken);
+
+          return data;
+        }),
+        catchError((error) => {
+          return of(error.response);
+        }),
+      );
   }
 
   loginUser(loginUserDto: LoginUserDto, response: Response) {

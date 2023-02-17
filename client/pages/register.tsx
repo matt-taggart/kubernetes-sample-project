@@ -4,6 +4,7 @@ import NuxtLink from "next/link";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import clsx from "clsx";
+import { useGoogleLogin } from "@react-oauth/google";
 import AuthLayout from "../components/AuthLayout";
 import { GoogleIcon } from "../components/GoogleIcon";
 
@@ -17,6 +18,35 @@ export default function Register() {
     formState: { errors },
   } = useForm({ mode: "all" });
   const router = useRouter();
+
+  const registerWithGoogle = async (accessToken: string) => {
+    console.log("%caccessToken", "color:cyan; ", accessToken);
+    try {
+      await axios({
+        url: "v1/register/google",
+        method: "post",
+        withCredentials: true,
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+        },
+      });
+      router.push("/");
+    } catch (error) {
+      setServerError(
+        "There was an error trying to register your account with Google."
+      );
+    }
+  };
+
+  const login = useGoogleLogin({
+    onSuccess: (tokenResponse) => {
+      console.log("%ctokenResponse", "color:cyan; ", tokenResponse);
+      registerWithGoogle(tokenResponse.access_token);
+    },
+    onError: (error) => {
+      console.log("%cerror", "color:cyan; ", error);
+    },
+  });
 
   watch(() => setServerError(""));
 
@@ -184,7 +214,7 @@ export default function Register() {
                               cy="12"
                               r="10"
                               stroke="currentColor"
-                              stroke-width="4"
+                              strokeWidth="4"
                             ></circle>
                             <path
                               className="opacity-75"
@@ -226,6 +256,7 @@ export default function Register() {
                     <div className="text-center mb-4 sm:space-x-4">
                       <button
                         type="button"
+                        onClick={login}
                         className="flex align-center justify-center py-2 px-4 w-full inline-block text-center mb-3 rounded leading-5 text-indigo-500 bg-transparent border border-indigo-500 hover:text-gray-100 hover:bg-indigo-500 hover:ring-0 hover:border-indigo-500 focus:text-gray-100 focus:bg-indigo-500 focus:border-indigo-500 focus:outline-none focus:ring-0"
                       >
                         <GoogleIcon />{" "}

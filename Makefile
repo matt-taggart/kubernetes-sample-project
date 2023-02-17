@@ -19,10 +19,10 @@ update-dev-images:
 	docker build -t customers -f ./customers-microservice/Dockerfile.dev ./customers-microservice
 	docker tag customers us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/customers
 	docker push us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/customers
-	docker build -t greetings -f ./greetings/Dockerfile.dev ./greetings-microservice
+	docker build -t greetings -f ./greetings-microservice/Dockerfile.dev ./greetings-microservice
 	docker tag greetings us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/greetings
 	docker push us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/greetings
-	docker build -t images -f ./images/Dockerfile.dev ./images-microservice
+	docker build -t images -f ./images-microservice/Dockerfile.dev ./images-microservice
 	docker tag images us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/images
 	docker push us-west2-docker.pkg.dev/elegant-tangent-374007/card-couture/images
 	docker build -t server -f ./nest-server/Dockerfile.dev ./nest-server

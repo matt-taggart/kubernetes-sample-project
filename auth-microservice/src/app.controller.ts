@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { LogoutUserDto } from './dto/logout-user.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { RegisterGoogleUserDto } from './dto/register-google-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 
 @Controller()
@@ -12,8 +13,17 @@ export class AppController {
 
   @MessagePattern({ cmd: 'register' })
   registerUser(registerUserDto: RegisterUserDto) {
-    console.log('got to microservice');
     return this.appService.registerUser(registerUserDto);
+  }
+
+  @MessagePattern({ cmd: 'register-google' })
+  registerGoogleUser(registerGoogleUserDto: RegisterGoogleUserDto) {
+    console.log(
+      '%cregisterGoogleUserDto',
+      'color:cyan; ',
+      registerGoogleUserDto,
+    );
+    return this.appService.registerGoogleUser(registerGoogleUserDto);
   }
 
   @MessagePattern({ cmd: 'login' })
